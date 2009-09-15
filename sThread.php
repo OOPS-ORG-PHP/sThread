@@ -152,12 +152,11 @@ Class sThread {
 			// protocol level error
 			if ( $recvR === null ) {
 				$res->failure++;
-				$res->status[$key] = array ("{$host}:{$port}", false, 'Protocol error');
-
 				fclose ($sess->sock[$key]);
 				event_buffer_free ($sess->event[$key]);
 				return true;
 			}
+			return;
 		}
 		// }}}
 
