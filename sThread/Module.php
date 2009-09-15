@@ -25,7 +25,7 @@ Class sThread_Module {
 		foreach ( $mods as $mod ) {
 			require_once "$mod";
 			$mod = basename ($mod, '.php');
-			$class = strtoupper ($mod);
+			$class = 'sThread_' . strtoupper ($mod);
 			self::$obj->$mod = new $class;
 			self::$port[$mod] = self::$obj->$mod->port;
 		}
