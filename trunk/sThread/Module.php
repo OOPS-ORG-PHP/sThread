@@ -3,7 +3,7 @@ Class sThread_Module {
 	// {{{ properties
 	static public $obj;
 	static public $port;
-	static private $moddir = 'sThread/Modules';
+	static private $moddir = '/sThread/Modules';
 	// }}}
 
 	// {{{ (void) __construct (void)
@@ -21,7 +21,15 @@ Class sThread_Module {
 	 * $port에는 module을 키로 하여 모듈 포트를 저장.
 	 */
 	function init () {
+		$mods_r = explode (':', ini_get ('include_path'));
+		foreach ( $mods_r as $_mods ) {
+			if ( is_dir ($_mods . self::$moddir) ) {
+				self::$moddir = $_mods . self::$moddir;
+				break;
+			}
+		}
 		$mods = @glob (self::$moddir . '/*.php', GLOB_MARK|GLOB_BRACE);
+
 		if ( ($env = getenv ('STHREAD_MODULES')) !== false ) {
 			if ( is_dir ($env) ) {
 				$user_mod = @glob ($env . '/*.php', GLOB_MARK|GLOB_BRACE);
