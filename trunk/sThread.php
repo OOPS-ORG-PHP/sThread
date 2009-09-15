@@ -331,6 +331,10 @@ Class sThread {
 				list ($host, $port, $type) = Vari::$sess->addr[$key];
 				Vari::$res->failure++;
 				Vari::$res->status[$key] = array ("{$host}:{$port}", false, 'Protocol timeout');
+
+				if ( self::$mod->$type->clearsession === true )
+					self::$mod->$type->clear_session ($key);
+
 				if ( is_resource ($sess->event[$key]) )
 					event_buffer_free ($sess->event[$key]);
 			}
