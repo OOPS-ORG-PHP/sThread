@@ -1,5 +1,5 @@
 <?php
-Class Module {
+Class sThread_Module {
 	// {{{ properties
 	static public $obj;
 	static public $port;
@@ -59,6 +59,6 @@ Class Module {
 	// }}}
 }
 
-Module::init ();
-$mod = &Module::$obj;
+sThread_Module::init ();
+$mod = &sThread_Module::$obj;
 ?>

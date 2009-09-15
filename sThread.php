@@ -5,15 +5,15 @@ require_once 'sThread/Vari.php';
 require_once 'sThread/Module.php';
 require_once 'sThread/Addr.php';
 
-function readCallback ($buf, $arg) {
+function sThread_readCallback ($buf, $arg) {
 	return sThread::readCallback ($buf, $arg);
 }
 
-function writeCallback ($buf, $arg) {
+function sThread_writeCallback ($buf, $arg) {
 	return sThread::writeCallback ($buf, $arg);
 }
 
-function exceptionCallback ($buf, $arg) { }
+function sThread_exceptionCallback ($buf, $arg) { }
 
 Class sThread {
 	const MAJOR_VERSION = 0;
@@ -45,8 +45,8 @@ Class sThread {
 			'send'   => array (), // socket write complete flag. set 1, complete
 		);
 
-		Module::init ();
-		self::$mod = &Module::$obj;
+		sThread_Module::init ();
+		self::$mod = &sThread_Module::$obj;
 	}
 
 	function execute ($hosts, $tmout = 1) {
@@ -62,7 +62,7 @@ Class sThread {
 		foreach ( $hosts as $line ) {
 			$res->total++;
 			$line = rtrim ($line);
-			if ( ($newline = Address::parse ($line, $key)) === false ) {
+			if ( ($newline = sThread_Address::parse ($line, $key)) === false ) {
 				list ($host, $port) = explode (':', $line);
 				$res->failure++;
 				$res->status[$key] = array ("{$host}:{$port}", false, "Address parsing error");
@@ -96,9 +96,9 @@ Class sThread {
 
 			$sess->event[$key] = event_buffer_new (
 					$sess->sock[$key],
-					"readCallback",
-					"writeCallback",
-					"exceptionCallback", array ($key)
+					"sThread_readCallback",
+					"sThread_writeCallback",
+					"sThread_exceptionCallback", array ($key)
 			);
 			event_buffer_timeout_set ($sess->event[$key], $tmout, $tmout);
 			event_buffer_base_set ($sess->event[$key], $base);
