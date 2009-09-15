@@ -3,7 +3,7 @@ Class sThread_Module {
 	// {{{ properties
 	static public $obj;
 	static public $port;
-	static private $moddir = './module';
+	static private $moddir = 'sThread/Modules';
 	// }}}
 
 	// {{{ (void) __construct (void)
@@ -21,11 +21,31 @@ Class sThread_Module {
 	 * $port에는 module을 키로 하여 모듈 포트를 저장.
 	 */
 	function init () {
-		$mods = glob (self::$moddir . '/*.php', GLOB_MARK|GLOB_BRACE);
+		$mods = @glob (self::$moddir . '/*.php', GLOB_MARK|GLOB_BRACE);
+		if ( ($env = getenv ('STHREAD_MODULES')) !== false ) {
+			if ( is_dir ($env) ) {
+				$user_mod = @glob ($env . '/*.php', GLOB_MARK|GLOB_BRACE);
+				if ( is_array ($user_mod) )
+					$mods = array_merge ($mods, $user_mod);
+			}
+		}
+
+		if ( count ($mods) == 0 ) {
+			ePrint::ePrintf ('Error: Availble module is not found');
+			exit (1);
+		}
+
 		foreach ( $mods as $mod ) {
 			require_once "$mod";
 			$mod = basename ($mod, '.php');
 			$class = 'sThread_' . strtoupper ($mod);
+			if ( ! class_exists ($class, false) ) {
+				ePrint::ePrintf (
+					'Warning: %s is not sThread module structure (%s class not found)',
+					array ($mod . '.php', $class)
+				);
+				continue;
+			}
 			self::$obj->$mod = new $class;
 			self::$port[$mod] = self::$obj->$mod->port;
 		}
