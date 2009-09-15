@@ -10,6 +10,7 @@ Class Vari {
 	const DEBUG3 = 3;
 
 	//const EVENT_CONNECT     = 0;
+	const EVENT_ERROR_CLOSE = -1;
 	const EVENT_READY_SEND  = 0;
 	const EVENT_READY_RECV  = 1;
 	const EVENT_SEND_DONE   = 1;
