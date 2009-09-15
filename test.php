@@ -14,9 +14,9 @@ print_r (Vari::$res);
 
 unset ($host);
 $host = array (
-	'test.domain;.com:80',
-	'test10.domain.com:227',
-	'test11.domain.com:21',
+	'test.domain;.com:80', /* use http module */
+	'test10.domain.com:227', /* need port 227 module */
+	'test11.domain.com:21', /* need port 21 module */
 );
 
 $s->excute ($host, 1);
