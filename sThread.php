@@ -65,6 +65,7 @@ Class sThread {
 			if ( ($newline = sThread_Address::parse ($line, $key)) === false ) {
 				list ($host, $port) = explode (':', $line);
 				$res->failure++;
+				$sess->status[$key] = Vari::EVENT_ERROR_CLOSE;
 				$res->status[$key] = array ("{$host}:{$port}", false, "Address parsing error");
 				$key++;
 				continue;
@@ -81,6 +82,7 @@ Class sThread {
 					ePrint::ePrintf ("%s:%d (%d) Failed socket create: %s",
 								array ($host, $port, $key, $errstr));
 				$res->failure++;
+				self::$mod->$type->set_last_status ($sess, $key);
 				$res->status[$key] = array ("{$host}:{$port}", false, "Failed socket create: {$errstr}");
 				$key++;
 				continue;
@@ -152,6 +154,7 @@ Class sThread {
 			// protocol level error
 			if ( $recvR === null ) {
 				$res->failure++;
+				self::$mod->$type->set_last_status ($sess, $key);
 				fclose ($sess->sock[$key]);
 				event_buffer_free ($sess->event[$key]);
 				return true;
@@ -216,6 +219,7 @@ Class sThread {
 				ePrint::ePrintf ("[%-15s] Error: %s:%d Send error",
 					array ($sess->sock[$key], $host, $port));
 			$res->failure++;
+			self::$mod->$type->set_last_status ($sess, $key);
 			$res->status[$key] = array ("{$host}:{$port}", false, "{$handler} Send error");
 			fclose ($sess->sock[$key]);
 			event_buffer_free ($sess->event[$key]);
@@ -239,10 +243,15 @@ Class sThread {
 		$event = self::$mod->$type->call_status ($sess->status[$key], true);
 		if ( $event === false ) {
 			if ( ePrint::$debugLevel >= Vari::DEBUG1 )
-				ePrint::ePrintf ("[%-15s] Error: %s 'Unknown status => %d",
-					array ($sess->sock[$key], $sess->addr[$key], $sess->status[$key]));
+				ePrint::ePrintf ("[%-15s] Error: %s:%d 'Unknown status => %d (%s)",
+					array ($sess->sock[$key], $host, $port, $sess->status[$key], $type));
 			$res->failure++;
-			$res->status[$key] = array ("{$host}:{$port}", false, "Unknown Status: {$sess->status[$key]}");
+			self::$mod->$type->set_last_status ($sess, $key);
+			$res->status[$key] = array (
+				"{$host}:{$port}",
+				false,
+				"Unknown Status: {$sess->status[$key]} ({$type})"
+			);
 			return false;
 		}
 
@@ -261,17 +270,23 @@ Class sThread {
 		$is_rw = self::$mod->$type->check_buf_status ($sess->status[$key]);
 
 		/*
-		 * $is_wr가 sThread::SHARED_READY_CLOSE 상태가 되면, 모든 작업이
+		 * $is_wr가 sThread::EVENT_READY_CLOSE 상태가 되면, 모든 작업이
 		 * 완료된 case 이므로 socket을 닫는다. $is_rw 가 false일 경우,
 		 * 알 수 없는 상태이므로 종료 한다.
 		 */
 		if ( $is_rw === Vari::EVENT_READY_CLOSE || $is_rw === false ) {
 			if ( $is_rw === false ) {
+				print_r ($sess->addr[$key]);
 				if ( ePrint::$debugLevel >= Vari::DEBUG1 )
-					ePrint::ePrintf ("[%-15s] Error: %s 'Unknown status => %d",
-						array ($sess->sock[$key], $sess->addr[$key], $sess->status[$key]));
+					ePrint::ePrintf ("[%-15s] Error: %s:%d 'Unknown status => %d (%s)'",
+						array ($sess->sock[$key], $host, $port, $sess->status[$key], $type));
 				$res->failure++;
-				$res->status[$key] = array ("{$host}:{$port}", false, "Unknown Status: {$sess->status[$key]}");
+				self::$mod->$type->set_last_status ($sess, $key);
+				$res->status[$key] = array (
+					"{$host}:{$port}",
+					false,
+					"Unknown Status: {$sess->status[$key]} ({$type})"
+				);
 			} else {
 				ePrint::dPrintf (Vari::DEBUG1, "[%-15s] %s:%d Socket close\n",
 							$sess->sock[$key], $host, $port);
@@ -311,7 +326,8 @@ Class sThread {
 		foreach ( $sess->status as $key => $val ) {
 			list ($host, $port, $type) = $sess->addr[$key];
 
-			if ( self::$mod->$type->check_buf_status ($val) !== Vari::EVENT_READY_CLOSE ) {
+			if ( $val !== Vari::EVENT_ERROR_CLOSE &&
+				 self::$mod->$type->check_buf_status ($val) !== Vari::EVENT_READY_CLOSE ) {
 				list ($host, $port, $type) = Vari::$sess->addr[$key];
 				Vari::$res->failure++;
 				Vari::$res->status[$key] = array ("{$host}:{$port}", false, 'Protocol timeout');
