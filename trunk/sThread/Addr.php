@@ -1,7 +1,7 @@
 <?php
 require_once 'ePrint.php';
 
-Class Address {
+Class sThread_Address {
 
 	function parse ($v) {
 		$v = explode (':', $v);
@@ -27,19 +27,19 @@ Class Address {
 
 				// 포트는 정확하고, 모듈 이름이 잘못되었을 경우
 				// 보정해 주는 것이 맞을까??
-				//if ( ! Module::port ($new_array[2]) )
-				//	$new_array[2] = Module::type ($new_array[1]);
+				//if ( ! sThread_Module::port ($new_array[2]) )
+				//	$new_array[2] = sThread_Module::type ($new_array[1]);
 				break;
 			case 2 :
 				if ( is_numeric (trim ($v[1])) ) {
 					// 포트가 주어졌을 경우 , 포트를 이용하여 어떤
 					// 모듈인지를 확인
 					$new_array[1] = $v[1];
-					$new_array[2] = Module::type ($v[1]);
+					$new_array[2] = sThread_Module::type ($v[1]);
 				} else {
 					// 포트가 주어지지 않았을 경우, 해당 모듈의 포트를
 					// 사용
-					$new_array[1] = Module::port ($v[1]);
+					$new_array[1] = sThread_Module::port ($v[1]);
 					$new_array[2] = $v[1];
 				}
 				break;
@@ -59,7 +59,7 @@ Class Address {
 		}
 
 		// 모듈을 지원하지 않는 경우 에러
-		if ( ! Module::port ($new_array[2]) ) {
+		if ( ! sThread_Module::port ($new_array[2]) ) {
 			if ( ePrint::$debugLevel >= Vari::DEBUG1 )
 				ePrint::ePrintf ('Error: Can\'t find %s module', $new_array[2]);
 			return false;
