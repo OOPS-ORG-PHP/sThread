@@ -1,4 +1,12 @@
 <?php
+/*
+ * sThread HTTP module
+ * $Id: http.php,v 1.5 2009-09-30 18:10:19 oops Exp $
+ *
+ * Recommand of check page size is under 4KB.
+ * If over 100K document, increase event_buffer_read size to 40960!!!
+ *
+ */
 Class sThread_HTTP {
 	// {{{ properties
 	static public $clearsession = true;
