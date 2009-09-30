@@ -98,7 +98,7 @@ Class sThread_HTTP {
 		);
 
 		foreach ( $target as $val ) {
-			$dest = &self::$sess->$target;
+			$dest = &self::$sess->$val;
 			if ( isset ($dest[$key]) )
 				unset ($dest[$key]);
 		}
