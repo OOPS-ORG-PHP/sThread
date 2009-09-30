@@ -3,13 +3,18 @@ require_once 'ePrint.php';
 
 Class sThread_Address {
 
-	function parse ($v) {
-		$v = explode (':', $v);
+	function parse ($buf) {
+		$extra = '';
+		if ( preg_match ('/^(.+)\|(.+)$/', $buf, $matches) ) {
+			$buf = $matches[1];
+			$extra = $matches[2];
+		}
+		$v = explode (':', $buf);
 		$size = count ($v);
 
 		if ( $size < 2 || $size > 3 ) {
 			if ( ePrint::$debugLevel >= Vari::DEBUG1 )
-				ePrint::ePrintf ('Error: Argument format is must \'host:port[:module]\' : ' . $v);
+				ePrint::ePrintf ('Error: Argument format is must \'host:port[:module]\' : ' . $buf);
 			return false;
 		}
 
@@ -65,7 +70,11 @@ Class sThread_Address {
 			return false;
 		}
 
-		return join (':', $new_array);
+		$r = join (':', $new_array);
+		if ( $extra )
+			$r .= '|' . $extra;
+
+		return $r;
 	}
 }
 ?>
