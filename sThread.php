@@ -28,7 +28,7 @@ Class sThread {
 		$this->mod     = &self::$mod;
 	}
 
-	function init () {
+	function init ($mod_no_init = false) {
 		Vari::$res = (object) array (
 			'total'   => 0,
 			'success' => 0,
@@ -45,8 +45,10 @@ Class sThread {
 			'send'   => array (), // socket write complete flag. set 1, complete
 		);
 
-		sThread_Module::init ();
-		self::$mod = &sThread_Module::$obj;
+		if ( $mod_no_init === false ) {
+			sThread_Module::init ();
+			self::$mod = &sThread_Module::$obj;
+		}
 	}
 
 	function execute ($hosts, $tmout = 1) {
