@@ -1,4 +1,21 @@
 <?php
+/**
+ * Project: sThread :: Single Thread Monitoring Agent API
+ * File: sThread.php
+ *
+ * Copyright (c) 1997-2009 JoungKyun.Kim
+ *
+ * LICENSE: BSD license
+ *
+ * @category    Network
+ * @package     sThread
+ * @author      JoungKyun.Kim <http://oops.org>
+ * @copyright   1997-2009 OOPS.ORG
+ * @license     BSD License
+ * @version     CVS: $Id: sThread.php,v 1.8 2009-09-30 18:19:37 oops Exp $
+ * @link        http://pear.oops.org/package/sThread
+ * @since       File available since relase 1.0.0
+ */
 
 require_once 'ePrint.php';
 require_once 'sThread/Vari.php';
