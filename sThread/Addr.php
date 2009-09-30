@@ -1,6 +1,35 @@
 <?php
+/**
+ *
+ * Parsing API of Host Address format
+ * File: sThread/Addr.php
+ *
+ * Copyright (c) 1997-2009 JoungKyun.Kim
+ *
+ * LICENSE: BSD license
+ *
+ * @category    Network
+ * @package     sThread
+ * @author      JoungKyun.Kim <http://oops.org>
+ * @copyright   1997-2009 OOPS.ORG
+ * @license     BSD License
+ * @version     CVS: $Id: Addr.php,v 1.4 2009-09-30 18:19:37 oops Exp $
+ * @link        http://pear.oops.org/package/sThread
+ */
+
 require_once 'ePrint.php';
 
+/**
+ *
+ * Parsing API of Host Address format
+ *
+ * @category   Network
+ * @package    sThread
+ * @author     JoungKyun.Kim <http://oops.org>
+ * @copyright  (c) 2009, JoungKyun.Kim
+ * @license    BSD License
+ * @version    CVS: $Id: Addr.php,v 1.4 2009-09-30 18:19:37 oops Exp $
+ */
 Class sThread_Address {
 
 	function parse ($buf) {
