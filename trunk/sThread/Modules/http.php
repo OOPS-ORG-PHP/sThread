@@ -255,24 +255,25 @@ Class sThread_HTTP {
 
 	// {{{ (void) sThread_HTTP::chunked_data ($key, $v)
 	private function chunked_data ($key, $v) {
-		if ( preg_match ("/^([0-9a-z ]{1,3})(?:\r\n)(.*)$/s", $v, $matches) ) {
+		if ( preg_match ("/^([0-9a-z][0-9a-z ]{0,3})\r\n(.*)$/s", $v, $matches) ) {
 			self::$sess->length[$key] += self::chunked_length ($matches[1]);
 			$v = $matches[2];
 		}
 
 		while ( ($pos = strpos ($v, "\r\n")) !== false ) {
-			$chunkeds = substr ($v, $pos + 2, 5);
-			if ( preg_match ("/([0-9a-z ]{1,3})\r\n/", $chunkeds, $matches) ) {
+			$chunkeds = substr ($v, $pos + 2, 6);
+			if ( preg_match ("/^([0-9a-z][0-9a-z ]{0,3})\r\n/", $chunkeds, $matches) ) {
 				self::$sess->length[$key] += self::chunked_length ($matches[1]);
 				self::$sess->data[$key] .= substr ($v, 0, $pos);
 				$v = substr ($v, $pos + strlen ($matches[1]) + 4);
 				continue;
 			}
 
-			self::$sess->data[$key] .= substr ($v, 0, $pos);
+			self::$sess->data[$key] .= substr ($v, 0, $pos + 2);
 			$v = substr ($v, $pos + 2);
 		}
 
+		self::$sess->data[$key] = preg_replace ("/([^\r]\n)\r\n$/", '\\1', self::$sess->data[$key]);
 		self::$sess->data[$key] .= $v;
 	}
 	// }}}
