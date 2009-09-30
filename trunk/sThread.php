@@ -22,10 +22,12 @@ Class sThread {
 	const VERSION = '0.0.1';
 
 	static public $mod;
+	static private $tmout;
 
 	function __construct () {
 		self::init ();
 		$this->mod     = &self::$mod;
+		$this->tmout   = &self::$tmout;
 	}
 
 	function init ($mod_no_init = false) {
@@ -55,6 +57,8 @@ Class sThread {
 		if ( ! is_array ($hosts) )
 			$hosts = array ($hosts);
 
+		self::$tmout = $tmout;
+
 		$sess = &Vari::$sess;
 		$res  = &Vari::$res;
 
@@ -73,10 +77,10 @@ Class sThread {
 				continue;
 			}
 			$sess->addr[$key] = explode (':', $newline);
-			list ($host, $port, $type) = explode (':', $newline);
+			self::explodeAddr ($host, $port, $type, $newline);
 			$addr = "tcp://{$host}:{$port}";
 
-			$sess->sock[$key] = @stream_socket_client ($addr, $errno, $errstr, $tmout);
+			$sess->sock[$key] = @stream_socket_client ($addr, $errno, $errstr, self::$tmout);
 			usleep (100);
 
 			if ( ! is_resource ($sess->sock[$key]) ) {
@@ -95,7 +99,7 @@ Class sThread {
 
 			$sess->status[$key] = 1;
 			$sess->send[$key] = Vari::EVENT_READY_SEND;
-			stream_set_timeout ($sess->sock[$key], $tmout, 0);
+			stream_set_timeout ($sess->sock[$key], self::$tmout, 0);
 			stream_set_blocking ($sess->sock[$key], 0);
 
 			$sess->event[$key] = event_buffer_new (
@@ -104,7 +108,7 @@ Class sThread {
 					"sThread_writeCallback",
 					"sThread_exceptionCallback", array ($key)
 			);
-			event_buffer_timeout_set ($sess->event[$key], $tmout, $tmout);
+			event_buffer_timeout_set ($sess->event[$key], self::$tmout, self::$tmout);
 			event_buffer_base_set ($sess->event[$key], $base);
 
 			if ( self::currentStatus ($key) === Vari::EVENT_READY_RECV )
@@ -124,7 +128,7 @@ Class sThread {
 		list ($key) = $arg;
 		$sess = &Vari::$sess;
 		$res  = &Vari::$res;
-		list ($host, $port, $type) = $sess->addr[$key];
+		self::explodeAddr ($host, $port, $type, $sess->addr[$key]);
 
 		ePrint::dPrintf (Vari::DEBUG3, "[%-15s] %s:%d Read Callback\n",
 				$sess->sock[$key], $host, $port);
@@ -185,6 +189,7 @@ Class sThread {
 		$sess = &Vari::$sess;
 		$res  = &Vari::$res;
 		list ($host, $port, $type) = $sess->addr[$key];
+		self::explodeAddr ($host, $port, $type, $sess->addr[$key]);
 
 		if ( $sess->send[$key] === Vari::EVENT_SEND_DONE ) {
 			$sess->send[$key] = Vari::EVENT_READY_SEND;
@@ -241,7 +246,7 @@ Class sThread {
 
 	function getCallname ($key) {
 		$sess = &Vari::$sess;
-		list ($host, $port, $type) = $sess->addr[$key];
+		self::explodeAddr ($host, $port, $type, $sess->addr[$key]);
 		$event = self::$mod->$type->call_status ($sess->status[$key], true);
 		if ( $event === false ) {
 			if ( ePrint::$debugLevel >= Vari::DEBUG1 )
@@ -263,7 +268,7 @@ Class sThread {
 	function currentStatus ($key, $next = false) {
 		$sess = &Vari::$sess;
 		$res  = &Vari::$res;
-		list ($host, $port, $type) = $sess->addr[$key];
+		self::explodeAddr ($host, $port, $type, $sess->addr[$key]);
 
 		if ( $next !== false ) {
 			self::$mod->$type->change_status ($sess, $key);
@@ -278,7 +283,6 @@ Class sThread {
 		 */
 		if ( $is_rw === Vari::EVENT_READY_CLOSE || $is_rw === false ) {
 			if ( $is_rw === false ) {
-				print_r ($sess->addr[$key]);
 				if ( ePrint::$debugLevel >= Vari::DEBUG1 )
 					ePrint::ePrintf ("[%-15s] Error: %s:%d 'Unknown status => %d (%s)'",
 						array ($sess->sock[$key], $host, $port, $sess->status[$key], $type));
@@ -318,6 +322,11 @@ Class sThread {
 		return $is_rw;
 	}
 
+	function explodeAddr (&$host, &$port, &$type, $v) {
+		list ($host, $port, $type) = is_array ($v) ? $v : explode (':', $v);
+		$type = preg_replace ('/\|.*/', '', $type);
+	}
+
 	function nextStatus ($key) {
 		return self::currentStatus ($key, true);
 	}
@@ -326,7 +335,7 @@ Class sThread {
 		$sess = &Vari::$sess;
 
 		foreach ( $sess->status as $key => $val ) {
-			list ($host, $port, $type) = $sess->addr[$key];
+			self::explodeAddr ($host, $port, $type, $sess->addr[$key]);
 
 			if ( $val !== Vari::EVENT_ERROR_CLOSE &&
 				 self::$mod->$type->check_buf_status ($val) !== Vari::EVENT_READY_CLOSE ) {

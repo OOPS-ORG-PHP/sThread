@@ -113,12 +113,16 @@ Class sThread_HTTP {
 	// {{{ (void) sThread_HTTP::http_request (&$sess, $key)
 	function http_request (&$sess, $key) {
 		list ($host, $port, $type) = $sess->addr[$key];
+		$opt = self::extraOption ($type);
 
-		$uri = self::$uri;
+		$uri = isset ($opt->uri) ? $opt->uri : self::$uri;
+		$hostHeader = isset ($opt->host) ? $opt->host : $host;
+		$agent = isset ($opt->agent) ? $opt->agent : self::$agent;
+
 		return "GET {$uri} HTTP/1.1\r\n" .
-				"Host: {$host}\r\n" .
+				"Host: {$hostHeader}\r\n" .
 				"Accpt: *.*\r\n" .
-				'User-Agent: ' . self::$agent . "\r\n" .
+				"User-Agent: {$agent}\r\n" .
 				"Connection: close\r\n" .
 				"\r\n";
 	}
@@ -130,6 +134,8 @@ Class sThread_HTTP {
 			return false;
 
 		list ($host, $port, $type) = $sess->addr[$key];
+		# remove extra option
+		$type = preg_replace ('/\|.*/', '', $type);
 		$sess->recv[$key] .= $recv;
 
 		/*
@@ -268,6 +274,27 @@ Class sThread_HTTP {
 		}
 
 		self::$sess->data[$key] .= $v;
+	}
+	// }}}
+
+	// {{{ (object) sThread_HTTP::extraOption (&$type)
+	function extraOption (&$type) {
+		if ( ! preg_match ('/^(.+)\|(.+)$/', $type, $matches) )
+			return false;
+
+		$type = $matches[1];
+		$buf = explode (',', $matches[2]);
+
+		$r = (object) array ();
+		foreach ( $buf as $val ) {
+			if ( ! preg_match ('/^(.+)=>(.+)/', $val, $matches) )
+				continue;
+
+			$key = trim ($matches[1]);
+			$r->$key = trim ($matches[2]);
+		}
+
+		return $r;
 	}
 	// }}}
 }
