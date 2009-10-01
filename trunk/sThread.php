@@ -12,7 +12,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2009 OOPS.ORG
  * @license     BSD License
- * @version     CVS: $Id: sThread.php,v 1.9 2009-10-01 07:41:34 oops Exp $
+ * @version     CVS: $Id: sThread.php,v 1.10 2009-10-01 09:09:27 oops Exp $
  * @link        http://pear.oops.org/package/sThread
  * @since       File available since relase 1.0.0
  */
@@ -79,8 +79,6 @@ Class sThread {
 		$sess = &Vari::$sess;
 		$res  = &Vari::$res;
 
-		$base = event_base_new ();
-
 		$key = 0;
 		foreach ( $hosts as $line ) {
 			$res->total++;
@@ -118,6 +116,13 @@ Class sThread {
 			$sess->send[$key] = Vari::EVENT_READY_SEND;
 			stream_set_timeout ($sess->sock[$key], self::$tmout, 0);
 			stream_set_blocking ($sess->sock[$key], 0);
+			$key++;
+		}
+
+		$base = event_base_new ();
+		foreach ( $sess->sock as $key => $val ) {
+			if ( ! is_resource ($val) )
+				continue;
 
 			$sess->event[$key] = event_buffer_new (
 					$sess->sock[$key],
@@ -132,8 +137,6 @@ Class sThread {
 				event_buffer_enable ($sess->event[$key], EV_READ);
 			else
 				event_buffer_enable ($sess->event[$key], EV_WRITE);
-
-			$key++;
 		}
 
 		event_base_loop ($base);
