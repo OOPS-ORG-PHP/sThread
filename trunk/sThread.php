@@ -12,7 +12,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2009 OOPS.ORG
  * @license     BSD License
- * @version     CVS: $Id: sThread.php,v 1.8 2009-09-30 18:19:37 oops Exp $
+ * @version     CVS: $Id: sThread.php,v 1.9 2009-10-01 07:41:34 oops Exp $
  * @link        http://pear.oops.org/package/sThread
  * @since       File available since relase 1.0.0
  */
@@ -162,7 +162,9 @@ Class sThread {
 		ePrint::dPrintf (Vari::DEBUG2, "[%-15s] %s:%d Recieve %s call\n",
 					$sess->sock[$key], $host, $port, $handler);
 
-		$buffer = event_buffer_read ($buf, 4096);
+		while ( strlen ($_buf = event_buffer_read ($buf, 4096)) > 0 )
+			$buffer .= $_buf;
+
 		ePrint::dPrintf (Vari::DEBUG3, "[%-15s] %s:%d Recieved data\n",
 				$sess->sock[$key], $host, $port);
 		if ( ePrint::$debugLevel >= Vari::DEBUG3 ) {
