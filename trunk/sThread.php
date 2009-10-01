@@ -12,7 +12,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2009 OOPS.ORG
  * @license     BSD License
- * @version     CVS: $Id: sThread.php,v 1.10 2009-10-01 09:09:27 oops Exp $
+ * @version     CVS: $Id: sThread.php,v 1.11 2009-10-01 09:58:06 oops Exp $
  * @link        http://pear.oops.org/package/sThread
  * @since       File available since relase 1.0.0
  */
@@ -97,6 +97,12 @@ Class sThread {
 
 			$sess->sock[$key] = @stream_socket_client ($addr, $errno, $errstr, self::$tmout);
 			usleep (100);
+
+			// If timeout is less than 2 seconds, reconnect.
+			if ( ! is_resource ($sess->sock[$key]) && self::$tmout < 2 ) {
+				$sess->sock[$key] = @stream_socket_client ($addr, $errno, $errstr, self::$tmout);
+				usleep (100);
+			}
 
 			if ( ! is_resource ($sess->sock[$key]) ) {
 				if ( ePrint::$debugLevel >= Vari::DEBUG1 )
