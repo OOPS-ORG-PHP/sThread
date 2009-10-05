@@ -12,7 +12,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2009 OOPS.ORG
  * @license     BSD License
- * @version     CVS: $Id: sThread.php,v 1.11 2009-10-01 09:58:06 oops Exp $
+ * @version     CVS: $Id: sThread.php,v 1.12 2009-10-05 13:30:20 oops Exp $
  * @link        http://pear.oops.org/package/sThread
  * @since       File available since relase 1.0.0
  */
@@ -40,11 +40,13 @@ Class sThread {
 
 	static public $mod;
 	static private $tmout;
+	static public $async;
 
 	function __construct () {
 		self::init ();
 		$this->mod     = &self::$mod;
 		$this->tmout   = &self::$tmout;
+		$this->async   = &self::$async;
 	}
 
 	function init ($mod_no_init = false) {
@@ -68,6 +70,8 @@ Class sThread {
 			sThread_Module::init ();
 			self::$mod = &sThread_Module::$obj;
 		}
+
+		self::$async = true;
 	}
 
 	function execute ($hosts, $tmout = 1) {
@@ -95,16 +99,14 @@ Class sThread {
 			self::explodeAddr ($host, $port, $type, $newline);
 			$addr = "tcp://{$host}:{$port}";
 
-			$sess->sock[$key] = @stream_socket_client ($addr, $errno, $errstr, self::$tmout);
+			$async = (self::$async === true) ?
+					STREAM_CLIENT_CONNECT|STREAM_CLIENT_ASYNC_CONNECT : STREAM_CLIENT_CONNECT;
+			$sess->sock[$key] = @stream_socket_client (
+				$addr, $errno, $errstr, self::$tmout, $async
+			);
 			usleep (100);
 
-			// If timeout is less than 2 seconds, reconnect.
-			if ( ! is_resource ($sess->sock[$key]) && self::$tmout < 2 ) {
-				$sess->sock[$key] = @stream_socket_client ($addr, $errno, $errstr, self::$tmout);
-				usleep (100);
-			}
-
-			if ( ! is_resource ($sess->sock[$key]) ) {
+			if ( self::$async !== true && ! is_resource ($sess->sock[$key]) ) {
 				if ( ePrint::$debugLevel >= Vari::DEBUG1 )
 					ePrint::ePrintf ("%s:%d (%d) Failed socket create: %s",
 								array ($host, $port, $key, $errstr));
@@ -369,7 +371,10 @@ Class sThread {
 				 self::$mod->$type->check_buf_status ($val) !== Vari::EVENT_READY_CLOSE ) {
 				list ($host, $port, $type) = Vari::$sess->addr[$key];
 				Vari::$res->failure++;
-				Vari::$res->status[$key] = array ("{$host}:{$port}", false, 'Protocol timeout');
+				if ( $val == 1 )
+					Vari::$res->status[$key] = array ("{$host}:{$port}", false, 'Connection timeout');
+				else
+					Vari::$res->status[$key] = array ("{$host}:{$port}", false, 'Protocol timeout');
 
 				if ( self::$mod->$type->clearsession === true )
 					self::$mod->$type->clear_session ($key);
