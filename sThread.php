@@ -12,7 +12,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2009 OOPS.ORG
  * @license     BSD License
- * @version     CVS: $Id: sThread.php,v 1.13 2009-10-14 07:06:27 oops Exp $
+ * @version     CVS: $Id: sThread.php,v 1.14 2009-10-14 08:17:44 oops Exp $
  * @link        http://pear.oops.org/package/sThread
  * @since       File available since relase 1.0.0
  */
@@ -21,6 +21,7 @@ require_once 'ePrint.php';
 require_once 'sThread/Vari.php';
 require_once 'sThread/Module.php';
 require_once 'sThread/Addr.php';
+require_once 'sThread/Log.php';
 
 function sThread_readCallback ($buf, $arg) {
 	return sThread::readCallback ($buf, $arg);
@@ -41,12 +42,20 @@ Class sThread {
 	static public $mod;
 	static private $tmout;
 	static public $async;
+	static public $logfile;
+	static public $logformat;
+	static public $logtype;
 
 	function __construct () {
 		self::init ();
 		$this->mod     = &self::$mod;
 		$this->tmout   = &self::$tmout;
 		$this->async   = &self::$async;
+
+		# sThread_LOG varibles
+		$this->logfile   = &sThread_Log::$fname;
+		$this->logformat = &sThread_Log::$format;
+		$this->logtype   = &sThread_Log::$type;
 	}
 
 	function init ($mod_no_init = false) {
@@ -72,6 +81,11 @@ Class sThread {
 		}
 
 		self::$async = true;
+
+		# sThread_LOG varibles
+		self::$logfile   = &sThread_Log::$fname;
+		self::$logformat = &sThread_Log::$format;
+		self::$logtype   = &sThread_Log::$type;
 	}
 
 	function execute ($hosts, $tmout = 1) {
@@ -165,7 +179,7 @@ Class sThread {
 			return true;
 
 		if ( ($handler = self::getCallname ($key)) === false ) {
-			fclose ($sess->sock[$key]);
+			self::socketClose ($key);
 			event_buffer_free ($sess->event[$key]);
 			return true;
 		}
@@ -191,7 +205,7 @@ Class sThread {
 			if ( $recvR === null ) {
 				$res->failure++;
 				self::$mod->$type->set_last_status ($sess, $key);
-				fclose ($sess->sock[$key]);
+				self::socketClose ($key);
 				event_buffer_free ($sess->event[$key]);
 				return true;
 			}
@@ -206,7 +220,7 @@ Class sThread {
 		 * Unknown status or Regular connection end
 		 */
 		if ( ($is_rw = self::nextStatus ($key)) === false ) {
-			fclose ($sess->sock[$key]);
+			self::socketClose ($key);
 			event_buffer_free ($sess->event[$key]);
 			return true;
 		}
@@ -227,7 +241,7 @@ Class sThread {
 			 * Unknown status or Regular connection end
 			 */
 			if ( ($is_rw = self::nextStatus ($key)) === false ) {
-				fclose ($sess->sock[$key]);
+				self::socketClose ($key);
 				event_buffer_free ($sess->event[$key]);
 			}
 			return true;
@@ -241,7 +255,7 @@ Class sThread {
 
 
 		if ( ($handler = self::getCallname ($key)) === false ) {
-			fclose ($sess->sock[$key]);
+			self::socketClose ($key);
 			event_buffer_free ($sess->event[$key]);
 			return true;
 		}
@@ -258,7 +272,7 @@ Class sThread {
 			$res->failure++;
 			self::$mod->$type->set_last_status ($sess, $key);
 			$res->status[$key] = array ("{$host}:{$port}", false, "{$handler} Send error");
-			fclose ($sess->sock[$key]);
+			self::socketClose ($key);
 			event_buffer_free ($sess->event[$key]);
 			return true;
 		}
@@ -379,13 +393,18 @@ Class sThread {
 				if ( self::$mod->$type->clearsession === true )
 					self::$mod->$type->clear_session ($key);
 
-				if ( is_resource ($sess->sock[$key]) )
-					fclose ($sess->sock[$key]);
-
+				self::socketClose ($key);
 				if ( is_resource ($sess->event[$key]) )
 					event_buffer_free ($sess->event[$key]);
 			}
 		}
+	}
+
+	function socketClose ($key) {
+		sThread_Log::save ($key, $sess->recv[$key]);
+
+		if ( is_resource ($sess->sock[$key]) )
+			fclose ($sess->sock[$key]);
 	}
 }
 ?>
