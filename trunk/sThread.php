@@ -12,7 +12,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2009 OOPS.ORG
  * @license     BSD License
- * @version     CVS: $Id: sThread.php,v 1.14 2009-10-14 08:17:44 oops Exp $
+ * @version     CVS: $Id: sThread.php,v 1.15 2009-10-14 11:32:47 oops Exp $
  * @link        http://pear.oops.org/package/sThread
  * @since       File available since relase 1.0.0
  */
@@ -401,6 +401,9 @@ Class sThread {
 	}
 
 	function socketClose ($key) {
+		$sess = &Vari::$sess;
+
+		list ($host, $port) = $sess->addr[$key];
 		sThread_Log::save ($key, $sess->recv[$key]);
 
 		if ( is_resource ($sess->sock[$key]) )
