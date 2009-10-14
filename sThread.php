@@ -12,7 +12,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2009 OOPS.ORG
  * @license     BSD License
- * @version     CVS: $Id: sThread.php,v 1.12 2009-10-05 13:30:20 oops Exp $
+ * @version     CVS: $Id: sThread.php,v 1.13 2009-10-14 07:06:27 oops Exp $
  * @link        http://pear.oops.org/package/sThread
  * @since       File available since relase 1.0.0
  */
@@ -378,6 +378,9 @@ Class sThread {
 
 				if ( self::$mod->$type->clearsession === true )
 					self::$mod->$type->clear_session ($key);
+
+				if ( is_resource ($sess->sock[$key]) )
+					fclose ($sess->sock[$key]);
 
 				if ( is_resource ($sess->event[$key]) )
 					event_buffer_free ($sess->event[$key]);
