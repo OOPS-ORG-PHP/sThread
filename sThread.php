@@ -12,7 +12,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2009 OOPS.ORG
  * @license     BSD License
- * @version     CVS: $Id: sThread.php,v 1.15 2009-10-14 11:32:47 oops Exp $
+ * @version     CVS: $Id: sThread.php,v 1.16 2009-11-04 11:20:20 oops Exp $
  * @link        http://pear.oops.org/package/sThread
  * @since       File available since relase 1.0.0
  */
@@ -88,7 +88,7 @@ Class sThread {
 		self::$logtype   = &sThread_Log::$type;
 	}
 
-	function execute ($hosts, $tmout = 1) {
+	function execute ($hosts, $tmout = 1, $protocol = 'tcp') {
 		if ( ! is_array ($hosts) )
 			$hosts = array ($hosts);
 
@@ -111,7 +111,7 @@ Class sThread {
 			}
 			$sess->addr[$key] = explode (':', $newline);
 			self::explodeAddr ($host, $port, $type, $newline);
-			$addr = "tcp://{$host}:{$port}";
+			$addr = "{$protocol}://{$host}:{$port}";
 
 			$async = (self::$async === true) ?
 					STREAM_CLIENT_CONNECT|STREAM_CLIENT_ASYNC_CONNECT : STREAM_CLIENT_CONNECT;
