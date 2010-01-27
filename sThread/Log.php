@@ -13,7 +13,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2009 OOPS.ORG
  * @license     BSD License
- * @version     CVS: $Id: Log.php,v 1.2 2009-10-26 11:28:42 oops Exp $
+ * @version     CVS: $Id: Log.php,v 1.3 2010-01-27 06:10:14 oops Exp $
  * @link        http://pear.oops.org/package/sThread
  */
 Class sThread_Log {
@@ -51,9 +51,9 @@ Class sThread_Log {
 
 		if ( $res[1] === false && $recv ) {
 			ob_start ();
-			//ePrint::echoi ($recv, 4);
+			ePrint::echoi ($recv, 4);
 			$err = ob_get_contents ();
-			ob_end_flush ();
+			ob_end_clean ();
 			file_put_contents ($logfile, $err, FILE_APPEND);
 		}
 	}
