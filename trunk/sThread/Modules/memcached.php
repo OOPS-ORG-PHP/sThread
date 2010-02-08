@@ -1,9 +1,9 @@
 <?php
 /*
  * sThread MEMCACHED module
- * Protocol of ServerBase 2 memcached module
  * 
- * $Id: memcached.php,v 1.1 2010-01-27 07:33:07 oops Exp $
+ * $Id: memcached.php,v 1.2 2010-02-08 12:32:16 oops Exp $
+ * This is don't support binary data protocol!
  *
  */
 Class sThread_MEMCACHED {
