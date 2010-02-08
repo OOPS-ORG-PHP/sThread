@@ -13,7 +13,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2009 OOPS.ORG
  * @license     BSD License
- * @version     CVS: $Id: Log.php,v 1.3 2010-01-27 06:10:14 oops Exp $
+ * @version     CVS: $Id: Log.php,v 1.4 2010-02-08 12:31:53 oops Exp $
  * @link        http://pear.oops.org/package/sThread
  */
 Class sThread_Log {
@@ -22,14 +22,19 @@ Class sThread_Log {
 	static public $format = 'Ymd';
 
 	/*
-	 * type 0 -> only falied log
-	 *      1 -> all log
+	 * type 0  -> only falied logging
+	 *      1  -> all logging
+	 *      -1 -> no logging
 	 */
 	static public $type = 0;
 	// }}}
 
 	function save ($key, $recv) {
 		$res = &Vari::$res->status[$key];
+
+		// no logging
+		if ( self::$type < 0 )
+			return;
 
 		if ( self::$type != 1 && $res[1] === true )
 			return;
