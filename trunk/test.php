@@ -17,6 +17,7 @@ $host = array (
 	'test.domain;.com:80', /* use http module */
 	'test10.domain.com:227', /* need port 227 module */
 	'test11.domain.com:21', /* need port 21 module */
+	'test111.domain;.com:80,http::uri->/index.jsp', /* use http module with httpd option */
 );
 
 $s->excute ($host, 1);
