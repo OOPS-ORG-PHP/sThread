@@ -3,7 +3,7 @@
  * sThread DNS module
  * See also http://www.freesoft.org/CIE/RFC/1035/39.htm
  *
- * $Id: dns.php,v 1.2 2010-02-18 05:22:49 oops Exp $
+ * $Id: dns.php,v 1.3 2010-02-18 06:37:45 oops Exp $
  */
 Class sThread_DNS {
 	static public $clearsession = true;
@@ -31,10 +31,9 @@ Class sThread_DNS {
 	const QCLASS_HS   = 4;
 
 	static private $header_id;
-	static private $flag;
 	static private $header_member = array ('id', 'flags', 'noq', 'noans', 'noauth', 'noadd');
-	static private $dnserr;
 	static public $recv;
+	static $dns;
 	// }}}
 
 	// {{{ (void) sThread_DNS::__construct (void)
@@ -42,7 +41,7 @@ Class sThread_DNS {
 		self::init ();
 		$this->clearsession = &self::$clearsession;
 		$this->port         = &self::$port;
-		$this->recv         = &self::$recv;
+		$this->dns          = &self::$dns;
 	}
 	// }}}
 
@@ -116,9 +115,7 @@ Class sThread_DNS {
 	 */
 	function clear_session ($key) {
 		self::$header_id = '';
-		self::$flag = '';
-		self::$dnserr = '';
-		self::$recv = '';
+		self::$dns = array ();
 		return;
 	}
 	// }}}
@@ -163,21 +160,17 @@ Class sThread_DNS {
 				$opt->record = self::QTYPE_CNAME;
 				break;
 			default :
-				self::$dnserr = sprintf ('[DNS] Invalid query type : "%s"', $opt->record);
+				$err = sprintf ('[DNS] Invalid query type : "%s"', $opt->record);
 				Vari::$res->status[$key] = array (
-					"{$host}:{$port}",
-					false,
-					self::$dnserr
+					"{$host}:{$port}", false, $err
 				);
 				return false;
 		}
 
-		$send = self::query ($opt->query, $opt->record);
+		$send = self::query ($key, $opt->query, $opt->record);
 		if ( $send === false ) {
 			Vari::$res->status[$key] = array (
-				"{$host}:{$port}",
-				false,
-				self::$dnserr
+				"{$host}:{$port}", false, self::$dns[$key]->err
 			);
 			return false;
 		}
@@ -199,26 +192,26 @@ Class sThread_DNS {
 		if ( $rlen < 32 )
 			return false;
 
-		self::$recv->data = $sess->recv[$key];
-		self::$recv->length = $rlen;
+		self::$dns[$key]->recv->data = $sess->recv[$key];
+		self::$dns[$key]->recv->length = $rlen;
 
-		$r = self::recv_header ($sess->recv[$key]);
+		$r = self::recv_header ($key, $sess->recv[$key]);
 		if ( $r === false ) {
 			Vari::$res->status[$key] = array (
 				"{$host}:{$port}",
 				false,
-				self::$dnserr
+				self::$dns[$key]->err
 			);
 			return null;
 		}
 
-		if ( self::$recv->header->flags->rcode != 'NOERROR' ) {
-			$err = sprintf ('[DNS] Return RCODE flag "%s"', self::$recv->header->flags->rcode);
+		if ( self::$dns[$key]->recv->header->flags->rcode != 'NOERROR' ) {
+			$err = sprintf ('[DNS] Return RCODE flag "%s"', self::$dns[$key]->recv->header->flags->rcode);
 			Vari::$res->status[$key] = array ("{$host}:{$port}", false, $err);
 			return null;
 		}
 
-		if ( self::$recv->header->noans == 0 ) {
+		if ( self::$dns[$key]->recv->header->noans == 0 ) {
 			$err = '[DNS] No return result';
 			Vari::$res->status[$key] = array ("{$host}:{$port}", false, $err);
 			return null;
@@ -274,34 +267,6 @@ Class sThread_DNS {
 		return $encode ? pack ('n', $id) : $id;
 	} // }}}
 
-	// (bin string) function make_opcode ($type) {{{
-	//
-	// Query            0
-	// Inverse query    1
-	// Status           2
-	// Reserved         3-15
-	function make_opcode ($type) {
-		if ( $type > 0x0f ) {
-			self::$dnserr = sprintf ('[DNS] unknown opcode type %d', $type);
-			return false;
-		}
-
-		switch ($type) {
-			case self::OP_QUERY :
-				return '0000';
-				break;
-			case self::OP_IQUERY :
-				return '0001';
-				break;
-			case self::OP_STATUS :
-				return '0010';
-				break;
-			default :
-				self::$dnserr = sprintf ('[DNS] unknown opcode type %d', $type);
-				return false;
-		}
-	} // }}}
-
 	// {{{ function query_type ($v, $convert = false)
 	// if $convert set false, don't convert to decimal
 	function query_type ($v, $convert = true) {
@@ -326,12 +291,11 @@ Class sThread_DNS {
 			case self::QTYPE_MX:
 				return 'MX';
 			default:
-				self::$dnserr = sprintf ('[DNS] unknown query type 0x%02x', $v);
-				return 'Unknown';
+				return sprintf ('Unknown: 0x%02x', $v);
 		}
 	} // }}}
 
-	// {{{ function query_class ($v, $convert = false)
+	// {{{ (void) function query_class ($v, $convert = false)
 	// if $convert set true, convert binary code
 	function query_class ($v, $convert = true) {
 		if ( $convert ) {
@@ -347,8 +311,10 @@ Class sThread_DNS {
 			case self::QCLASS_HS :
 				return 'HS';
 			default :
-				self::$dnserr = sprintf ('[DNS] 0x%02x is %s query class.', $v, $v ? 'unknown' : 'reserved');
-				return false;
+				if ( $v )
+					return sprintf ('Unknown: 0x%02x', $v);
+				else
+					return sprintf ('Reserved: 0x%02x', $v);
 		}
 	} // }}}
 
@@ -368,10 +334,10 @@ Class sThread_DNS {
 	 *         OP_IQUERY     inverse query
 	 *         OP_STATUS     status query
 	 */
-	function make_header (&$buf) {
-		self::$header_id = self::random_id (true);
+	function make_header ($key, &$buf) {
+		self::$dns[$key]->header_id = self::random_id (true);
 
-		$buf = self::$header_id;      // Identification
+		$buf = self::$dns[$key]->header_id;      // Identification
 		$buf .= pack ('n', 0x0100);   // flags
 		$buf .= pack ('n', 1);        // number of questions
 		$buf .= pack ('x6');          // rest
@@ -401,8 +367,8 @@ Class sThread_DNS {
 	} // }}}
 
 	// {{{ (object|boolean) function query ($domain, $type)
-	function query ($domain, $type) {
-		self::make_header ($buf);
+	function query ($key, $domain, $type) {
+		self::make_header ($key, $buf);
 
 		if ( preg_match ('/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/', $domain) )
 			$query_type = self::OP_IQUERY;
@@ -412,13 +378,13 @@ Class sThread_DNS {
 		if ( $query_type === self::OP_IQUERY ) {
 			$ip = explode ('.', $domain);
 			if ( count ($ip) !== 4 ) {
-				self::$dnserr = sprintf ('[DNS] %s is invalid ip format', $domain);
+				self::$dns[$key]->err = sprintf ('[DNS] %s is invalid ip format', $domain);
 				return false;
 			}
 
 			foreach (array_reverse ($ip) as $v ) {
 				if ( $v > 255 ) {
-					self::$dnserr = sprintf ('[DNS] %s is invalid ip format', $domain);
+					self::$dns[$key]->err = sprintf ('[DNS] %s is invalid ip format', $domain);
 					return false;
 				}
 				$arpa .= $v . '.';
@@ -449,8 +415,7 @@ Class sThread_DNS {
 				return 'STATUS';
 				break;
 			default :
-				self::$dnserr = sprintf ('[DNS} unknown opcode type %02x', bindec ($v));
-				return false;
+				return sprintf ('Unknown: %02x', bindec (substr ($v, 1, 4)));
 		}
 	} // }}}
 
@@ -483,7 +448,7 @@ Class sThread_DNS {
 		}
 	} // }}}
 
-	/* (object) {{{ function recv_header_flags ($v)
+	/* (void) {{{ function recv_header_flags ($key, $v)
 	 *
 	 * flag 분석
 	 * -- 16-bits Flags --
@@ -492,8 +457,8 @@ Class sThread_DNS {
 	 * +----+--------+----+----+----+----+--------+-------+
 	 *   1      4      1    1    1    1      3        4     (bits)
 	 */
-	function recv_header_flags ($v) {
-		$buf = &self::$recv->header->flags;
+	function recv_header_flags ($key, $v) {
+		$buf = &self::$dns[$key]->recv->header->flags;
 		$v = decbin ($v);
 		$buf->qr = $v[0];
 		$buf->opcode = self::recv_flags_opcode (substr ($v, 1, 4));
@@ -502,36 +467,36 @@ Class sThread_DNS {
 		$buf->rd = $v[7];
 		$buf->ra = $v[8];
 		$buf->rcode = self::recv_flags_rcode (substr ($v, 12));
-
-		return $buf;
 	} // }}}
 
-	// {{{ (boolean) function recv_header ($v)
-	function recv_header ($v) {
+	// {{{ (boolean) function recv_header ($key, $v)
+	function recv_header ($key, $v) {
 		if ( strlen ($v) < 12 ) {
-			self::$dnserr = '[DNS] Recived header is over 12 characters';
+			self::$dns[$key]->err = '[DNS] Recived header is over 12 characters';
 			return false;
 		}
 
-		if ( self::$header_id !== substr ($v, 0, 2) ) {
-			self::$dnserr = sprintf (
+		if ( self::$dns[$key]->header_id !== substr ($v, 0, 2) ) {
+			$header_id = unpack ('n', self::$dns[$key]->header_id);
+			$recv_id   = unpack ('n', substr ($v, 0, 2));
+			self::$dns[$key]->err = sprintf (
 				'[DNS] Don\'t match packet id (send: 0x%04x, recv 0x%04x)',
-				ord (self::$header_id), substr ($v, 0, 2)
+				$header_id[1], $recv_id[1]
 			);
 
 			return false;
 		}
 
-		self::$recv->header->data = substr ($v, 0, 12);
-		self::$recv->header->length = 12;
-		$buf = unpack ('n*', self::$recv->header->data);
+		self::$dns[$key]->recv->header->data = substr ($v, 0, 12);
+		self::$dns[$key]->recv->header->length = 12;
+		$buf = unpack ('n*', self::$dns[$key]->recv->header->data);
 
 		for ( $i=0; $i<6; $i++ ) {
 			if ( self::$header_member[$i] == 'flags' ) {
-				self::$recv->header->{self::$header_member[$i]}->data = $buf[$i+1];
-				self::recv_header_flags ($buf[$i+1]);
+				self::$dns[$key]->recv->header->{self::$header_member[$i]}->data = $buf[$i+1];
+				self::recv_header_flags ($key, $buf[$i+1]);
 			} else
-				self::$recv->header->{self::$header_member[$i]} = $buf[$i+1];
+				self::$dns[$key]->recv->header->{self::$header_member[$i]} = $buf[$i+1];
 		}
 
 		return true;
@@ -556,29 +521,30 @@ Class sThread_DNS {
 		return $r;
 	} // }}}
 
-	// {{{ (void) function recv_question ($v)
-	function recv_question ($v) {
+	// {{{ (void) function recv_question ($key, $v)
+	function recv_question ($key, $v) {
 		$v = substr ($v, 12);
 		$z = $v;
-		self::$recv->question->length = 0;
+		$ques = &self::$dns[$key]->recv->question;
+		$ques->length = 0;
 
 		while ( ($rr = self::length_coded_string ($z)) != null ) {
 			if ( $rr === false )
 				return false;
-			self::$recv->question->qname .= $rr->data . '.';
-			self::$recv->question->length += $rr->length;
+			$ques->qname .= $rr->data . '.';
+			$ques->length += $rr->length;
 		}
 
-		self::$recv->question->type = self::query_type (substr ($z, 0, 2));
-		self::$recv->question->length += 2;
-		self::$recv->question->class = self::query_class (substr ($z, 2, 2));
-		self::$recv->question->length += 2;
-		self::$recv->question->data = substr ($v, 0, self::$recv->question->length);
+		$ques->type = self::query_type (substr ($z, 0, 2));
+		$ques->length += 2;
+		$ques->class = self::query_class (substr ($z, 2, 2));
+		$ques->length += 2;
+		$ques->data = substr ($v, 0, $ques->length);
 	} // }}}
 
-	// {{{ (void) function recv_rdata (&$v)
-	function recv_rdata (&$v) {
-		$buf = self::$recv->data;
+	// {{{ (void) function recv_rdata ($key, &$v)
+	function recv_rdata ($key, &$v) {
+		$buf = self::$dns[$key]->recv->data;
 		$vlen = $v->rdlen;
 
 		switch ($v->type) {
@@ -664,16 +630,17 @@ Class sThread_DNS {
 		}
 	} // }}}
 
-	// {{{ (void) function recv_resource ($v)
-	function recv_resource ($v) {
-		$start = self::$recv->header->length + self::$recv->question->length + 1;
-		self::$recv->resource->data = substr ($v, $start);
-		self::$recv->resource->length = strlen (self::$recv->resource->data);
+	// {{{ (void) function recv_resource ($key, $v)
+	function recv_resource ($key, $v) {
+		$header   = &self::$dns[$key]->header;
+		$question = &self::$dns[$key]->question;
 
-		$res = &self::$recv->resource;
+		$start = $header->length + $question->length + 1;
+		self::$dns[$key]->recv->resource->data = substr ($v, $start);
+		self::$dns[$key]->recv->resource->length = strlen (self::$dns[$key]->recv->resource->data);
+
+		$res = &self::$dns[$key]->recv->resource;
 		$buf = $res->data;
-		$header = &self::$recv->header;
-		$question = &self::$recv->question;
 
 		$idx = 0; // position of resource
 		$idn = 0; // value of position of resource
@@ -710,21 +677,21 @@ Class sThread_DNS {
 			$res->v[$i]->rdlen = $rdata['rdlen'];
 			$res->v[$i]->rdata = substr ($buf, $idx + 10 + 1, $res->v[$i]->rdlen);
 
-			self::recv_rdata ($res->v[$i]);
+			self::recv_rdata ($key, $res->v[$i]);
 			$buf = substr ($buf, $idx + 10 + $res->v[$i]->rdlen + 1);
 			$idx = 0;
 		}
 	} // }}}
 
 	// {{{ (void) function recv_parse ($v)
-	function recv_parse ($v) {
-		self::$recv->data = $v;
-		self::$recv->length = strlen ($v);
+	function recv_parse ($key, $v) {
+		self::$dns[$key]->recv->data = $v;
+		self::$dns[$key]->recv->length = strlen ($v);
 
-		self::recv_header ($v);
-		self::recv_question ($v);
-		self::recv_resource ($v);
-		print_r (self::$recv);
+		self::recv_header ($key, $v);
+		self::recv_question ($key, $v);
+		self::recv_resource ($key, $v);
+		//print_r (self::$dns[$key]->recv);
 	} // }}}
 }
 
