@@ -12,7 +12,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2009 OOPS.ORG
  * @license     BSD License
- * @version     CVS: $Id: sThread.php,v 1.17 2010-02-18 03:33:22 oops Exp $
+ * @version     CVS: $Id: sThread.php,v 1.18 2010-02-18 04:49:40 oops Exp $
  * @link        http://pear.oops.org/package/sThread
  * @since       File available since relase 1.0.0
  */
@@ -80,7 +80,7 @@ Class sThread {
 			self::$mod = &sThread_Module::$obj;
 		}
 
-		self::$async = true;
+		self::$async = false;
 
 		# sThread_LOG varibles
 		self::$logfile   = &sThread_Log::$fname;
