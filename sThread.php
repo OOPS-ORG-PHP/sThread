@@ -12,7 +12,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2009 OOPS.ORG
  * @license     BSD License
- * @version     CVS: $Id: sThread.php,v 1.16 2009-11-04 11:20:20 oops Exp $
+ * @version     CVS: $Id: sThread.php,v 1.17 2010-02-18 03:33:22 oops Exp $
  * @link        http://pear.oops.org/package/sThread
  * @since       File available since relase 1.0.0
  */
@@ -264,6 +264,15 @@ Class sThread {
 					$sess->sock[$key], $host, $port, $handler);
 
 		$send = self::$mod->$type->$handler ($sess, $key);
+
+		// make error for send packet
+		if ( $send === false ) {
+			$res->failure++;
+			self::$mod->$type->set_last_status ($sess, $key);
+			self::socketClose ($key);
+			event_buffer_free ($sess->event[$key]);
+			return true;
+		}
 
 		if ( event_buffer_write ($buf, $send, strlen ($send)) === false ) {
 			if ( ePrint::$debugLevel >= Vari::DEBUG1 )
