@@ -3,7 +3,7 @@
  * sThread DNS module
  * See also http://www.freesoft.org/CIE/RFC/1035/39.htm
  *
- * $Id: dns.php,v 1.3 2010-02-18 06:37:45 oops Exp $
+ * $Id: dns.php,v 1.4 2010-02-18 06:39:07 oops Exp $
  */
 Class sThread_DNS {
 	static public $clearsession = true;
@@ -30,10 +30,8 @@ Class sThread_DNS {
 	const QCLASS_CH   = 3;
 	const QCLASS_HS   = 4;
 
-	static private $header_id;
 	static private $header_member = array ('id', 'flags', 'noq', 'noans', 'noauth', 'noadd');
-	static public $recv;
-	static $dns;
+	static public $dns;
 	// }}}
 
 	// {{{ (void) sThread_DNS::__construct (void)
@@ -114,7 +112,6 @@ Class sThread_DNS {
 	 * 는 존재하지 않아도 된다.
 	 */
 	function clear_session ($key) {
-		self::$header_id = '';
 		self::$dns = array ();
 		return;
 	}
