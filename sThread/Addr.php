@@ -13,7 +13,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2009 OOPS.ORG
  * @license     BSD License
- * @version     CVS: $Id: Addr.php,v 1.4 2009-09-30 18:19:37 oops Exp $
+ * @version     CVS: $Id: Addr.php,v 1.5 2010-02-18 05:22:49 oops Exp $
  * @link        http://pear.oops.org/package/sThread
  */
 
@@ -28,10 +28,11 @@ require_once 'ePrint.php';
  * @author     JoungKyun.Kim <http://oops.org>
  * @copyright  (c) 2009, JoungKyun.Kim
  * @license    BSD License
- * @version    CVS: $Id: Addr.php,v 1.4 2009-09-30 18:19:37 oops Exp $
+ * @version    CVS: $Id: Addr.php,v 1.5 2010-02-18 05:22:49 oops Exp $
  */
 Class sThread_Address {
 
+	// {{{ (string) sThread_Address::parse ($buf)
 	function parse ($buf) {
 		$extra = '';
 		if ( preg_match ('/^(.+)\|(.+)$/', $buf, $matches) ) {
@@ -104,6 +105,26 @@ Class sThread_Address {
 			$r .= '|' . $extra;
 
 		return $r;
-	}
+	} //  }}}
+
+	// {{{ (object) sThread_Address::extraOption (&$type)
+	function extraOption (&$type) {
+		if ( ! preg_match ('/^(.+)\|(.+)$/', $type, $matches) )
+			return false;
+
+		$type = $matches[1];
+		$buf = explode (',', $matches[2]);
+
+		$r = (object) array ();
+		foreach ( $buf as $val ) {
+			if ( ! preg_match ('/^(.+)=>(.+)/', $val, $matches) )
+				continue;
+
+			$key = trim ($matches[1]);
+			$r->$key = trim ($matches[2]);
+		}
+
+		return $r;
+	} // }}}
 }
 ?>

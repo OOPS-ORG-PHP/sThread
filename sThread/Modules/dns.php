@@ -3,12 +3,11 @@
  * sThread DNS module
  * See also http://www.freesoft.org/CIE/RFC/1035/39.htm
  *
- * $Id: dns.php,v 1.1 2010-02-18 04:58:58 oops Exp $
+ * $Id: dns.php,v 1.2 2010-02-18 05:22:49 oops Exp $
  */
 Class sThread_DNS {
 	static public $clearsession = true;
 	static public $port = 53;
-	static private $opt;
 
 	const DNS_REQUEST  = 1;
 	const DNS_RESPONSE = 2;
@@ -116,7 +115,6 @@ Class sThread_DNS {
 	 * 는 존재하지 않아도 된다.
 	 */
 	function clear_session ($key) {
-		self::$opt = '';
 		self::$header_id = '';
 		self::$flag = '';
 		self::$dnserr = '';
@@ -133,9 +131,10 @@ Class sThread_DNS {
 	// {{{ (string) sThread_DNS::dns_request (&$sess, $key)
 	function dns_request (&$sess, $key) {
 		list ($host, $port, $type) = $sess->addr[$key];
-		self::$opt = self::extraOption ($type);
+		$opt = $sess->opt[$key];
 
-		if ( ! self::$opt->query ) {
+
+		if ( ! $opt->query ) {
 			Vari::$res->status[$key] = array (
 				"{$host}:{$port}",
 				false,
@@ -144,27 +143,27 @@ Class sThread_DNS {
 			return false;
 		}
 
-		if ( ! self::$opt->record )
-			self::$opt->record = 'A';
+		if ( ! $opt->record )
+			$opt->record = 'A';
 
-		switch (self::$opt->record) {
+		switch ($opt->record) {
 			case 'A' :
-				self::$opt->record = self::QTYPE_A;
+				$opt->record = self::QTYPE_A;
 				break;
 			case 'MX' :
-				self::$opt->record = self::QTYPE_MX;
+				$opt->record = self::QTYPE_MX;
 				break;
 			case 'PTR' :
-				self::$opt->record = self::QTYPE_PTR;
+				$opt->record = self::QTYPE_PTR;
 				break;
 			case 'NS' :
-				self::$opt->record = self::QTYPE_NS;
+				$opt->record = self::QTYPE_NS;
 				break;
 			case 'CNAME' :
-				self::$opt->record = self::QTYPE_CNAME;
+				$opt->record = self::QTYPE_CNAME;
 				break;
 			default :
-				self::$dnserr = sprintf ('[DNS] Invalid query type : "%s"', self::$opt->record);
+				self::$dnserr = sprintf ('[DNS] Invalid query type : "%s"', $opt->record);
 				Vari::$res->status[$key] = array (
 					"{$host}:{$port}",
 					false,
@@ -173,7 +172,7 @@ Class sThread_DNS {
 				return false;
 		}
 
-		$send = self::query (self::$opt->query, self::$opt->record);
+		$send = self::query ($opt->query, $opt->record);
 		if ( $send === false ) {
 			Vari::$res->status[$key] = array (
 				"{$host}:{$port}",
@@ -235,26 +234,6 @@ Class sThread_DNS {
 	 * User define functions
 	 * ********************************************************************************
 	 */
-
-	// {{{ (object) sThread_MYSQL::extraOption (&$type)
-	function extraOption (&$type) {
-		if ( ! preg_match ('/^(.+)\|(.+)$/', $type, $matches) )
-			return false;
-
-		$type = $matches[1];
-		$buf = explode (',', $matches[2]);
-
-		$r = (object) array ();
-		foreach ( $buf as $val ) {
-			if ( ! preg_match ('/^(.+)=>(.+)/', $val, $matches) )
-				continue;
-
-			$key = trim ($matches[1]);
-			$r->$key = trim ($matches[2]);
-		}
-
-		return $r;
-	} // }}}
 
 	/*
 	 * Debugging API

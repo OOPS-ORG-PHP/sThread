@@ -2,7 +2,7 @@
 /*
  * sThread MYSQL module
  * 
- * $Id: mysql.php,v 1.1 2010-02-08 14:06:06 oops Exp $
+ * $Id: mysql.php,v 1.2 2010-02-18 05:22:49 oops Exp $
  * See also http://forge.mysql.com/wiki/MySQL_Internals_ClientServer_Protocol
  *
  */
@@ -200,7 +200,7 @@ Class sThread_MYSQL {
 	// {{{ (binary) function mysql_sendauth (&$sess, $key)
 	function mysql_sendauth (&$sess, $key) {
 		list ($host, $port, $type) = $sess->addr[$key];
-		$opt = self::extraOption ($type);
+		$opt = $sess->opt[$key];
 
 		self::$server->user     = $opt->user;
 		self::$server->passwd   = $opt->pass;
@@ -378,26 +378,6 @@ Class sThread_MYSQL {
 	 * User define functions
 	 * ********************************************************************************
 	 */
-	// {{{ (object) sThread_MYSQL::extraOption (&$type)
-	function extraOption (&$type) {
-		if ( ! preg_match ('/^(.+)\|(.+)$/', $type, $matches) )
-			return false;
-
-		$type = $matches[1];
-		$buf = explode (',', $matches[2]);
-
-		$r = (object) array ();
-		foreach ( $buf as $val ) {
-			if ( ! preg_match ('/^(.+)=>(.+)/', $val, $matches) )
-				continue;
-
-			$key = trim ($matches[1]);
-			$r->$key = trim ($matches[2]);
-		}
-
-		return $r;
-	}
-	// }}}
 
 	// {{{ (void) function hexview ($buf, $len, $t = false)
 	function hexview ($buf, $len, $t = false) {
