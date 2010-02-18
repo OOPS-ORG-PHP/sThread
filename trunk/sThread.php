@@ -12,7 +12,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2009 OOPS.ORG
  * @license     BSD License
- * @version     CVS: $Id: sThread.php,v 1.18 2010-02-18 04:49:40 oops Exp $
+ * @version     CVS: $Id: sThread.php,v 1.19 2010-02-18 05:22:49 oops Exp $
  * @link        http://pear.oops.org/package/sThread
  * @since       File available since relase 1.0.0
  */
@@ -68,6 +68,7 @@ Class sThread {
 
 		Vari::$sess = (object) array (
 			'addr'   => array (),
+			'opt'    => array (),
 			'sock'   => array (),
 			'status' => array (),
 			'event'  => array (),
@@ -109,7 +110,9 @@ Class sThread {
 				$key++;
 				continue;
 			}
+			$sess->opt[$key] = sThread_Address::extraOption ($newline);
 			$sess->addr[$key] = explode (':', $newline);
+
 			self::explodeAddr ($host, $port, $type, $newline);
 			$addr = "{$protocol}://{$host}:{$port}";
 
@@ -377,7 +380,7 @@ Class sThread {
 
 	function explodeAddr (&$host, &$port, &$type, $v) {
 		list ($host, $port, $type) = is_array ($v) ? $v : explode (':', $v);
-		$type = preg_replace ('/\|.*/', '', $type);
+		//$type = preg_replace ('/\|.*/', '', $type);
 	}
 
 	function nextStatus ($key) {

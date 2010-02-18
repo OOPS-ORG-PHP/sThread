@@ -1,7 +1,7 @@
 <?php
 /*
  * sThread HTTP module
- * $Id: http.php,v 1.5 2009-09-30 18:10:19 oops Exp $
+ * $Id: http.php,v 1.6 2010-02-18 05:22:49 oops Exp $
  *
  * Recommand of check page size is under 4KB.
  * If over 100K document, increase event_buffer_read size to 40960!!!
@@ -121,7 +121,7 @@ Class sThread_HTTP {
 	// {{{ (void) sThread_HTTP::http_request (&$sess, $key)
 	function http_request (&$sess, $key) {
 		list ($host, $port, $type) = $sess->addr[$key];
-		$opt = self::extraOption ($type);
+		$opt = $sess->opt[$key];
 
 		$uri = isset ($opt->uri) ? $opt->uri : self::$uri;
 		$hostHeader = isset ($opt->host) ? $opt->host : $host;
@@ -283,27 +283,6 @@ Class sThread_HTTP {
 
 		self::$sess->data[$key] = preg_replace ("/([^\r]\n)\r\n$/", '\\1', self::$sess->data[$key]);
 		self::$sess->data[$key] .= $v;
-	}
-	// }}}
-
-	// {{{ (object) sThread_HTTP::extraOption (&$type)
-	function extraOption (&$type) {
-		if ( ! preg_match ('/^(.+)\|(.+)$/', $type, $matches) )
-			return false;
-
-		$type = $matches[1];
-		$buf = explode (',', $matches[2]);
-
-		$r = (object) array ();
-		foreach ( $buf as $val ) {
-			if ( ! preg_match ('/^(.+)=>(.+)/', $val, $matches) )
-				continue;
-
-			$key = trim ($matches[1]);
-			$r->$key = trim ($matches[2]);
-		}
-
-		return $r;
 	}
 	// }}}
 }
