@@ -2,7 +2,7 @@
 /*
  * sThread MYSQL module
  * 
- * $Id: mysql.php,v 1.2 2010-02-18 05:22:49 oops Exp $
+ * $Id: mysql.php,v 1.3 2010-02-22 09:43:22 oops Exp $
  * See also http://forge.mysql.com/wiki/MySQL_Internals_ClientServer_Protocol
  *
  */
@@ -16,6 +16,10 @@ Class sThread_MYSQL {
 	const MYSQL_HANDSHAKE = 3;
 	const MYSQL_SENDQUERY = 4;
 	const MYSQL_QUERYRES  = 5;
+	/*
+	 * When processing has error, call TYPE_QUIT method automatically
+	 * by parent::seocketClose API If TYPE_QUIT method is defined
+	 */
 	const MYSQL_QUIT      = 6;
 
 	const MYSQL_CLOSE     = 7;

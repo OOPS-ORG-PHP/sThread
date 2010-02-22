@@ -12,7 +12,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2009 OOPS.ORG
  * @license     BSD License
- * @version     CVS: $Id: sThread.php,v 1.19 2010-02-18 05:22:49 oops Exp $
+ * @version     CVS: $Id: sThread.php,v 1.20 2010-02-22 09:43:22 oops Exp $
  * @link        http://pear.oops.org/package/sThread
  * @since       File available since relase 1.0.0
  */
@@ -415,7 +415,29 @@ Class sThread {
 	function socketClose ($key) {
 		$sess = &Vari::$sess;
 
-		list ($host, $port) = $sess->addr[$key];
+		list ($host, $port, $type) = $sess->addr[$key];
+
+		if ( Vari::$res->status[$key][1] === false ) {
+			$handler = $type . '_quit';
+			if ( method_exists (self::$mod->$type, $handler) ) {
+				ePrint::dPrintf (Vari::DEBUG2, "[%-15s] %s:%d Quit call\n",
+							$sess->sock[$key], $host, $port);
+
+				$send = self::$mod->$type->$handler ($sess, $key);
+				@fwrite ($sess->sock[$key], $send, strlen ($send));
+
+				ePrint::dPrintf (
+					Vari::DEBUG3,
+					"[%-15s] %s:%d Send data\n",
+					$sess->sock[$key], $host, $port);
+
+				if ( ePrint::$debugLevel >= Vari::DEBUG3 ) {
+					$msg = rtrim ($send);
+					ePrint::echoi ($send . "\n", 8);
+				}
+			}
+		}
+
 		sThread_Log::save ($key, $sess->recv[$key]);
 
 		if ( is_resource ($sess->sock[$key]) )
