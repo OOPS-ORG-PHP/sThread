@@ -2,7 +2,7 @@
 /*
  * sThread FTP module
  * 
- * $Id: ftp.php,v 1.1 2010-02-22 09:43:42 oops Exp $
+ * $Id$
  * This is supported only until login process
  *
  */

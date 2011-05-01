@@ -3,7 +3,7 @@
  * sThread DNS module
  * See also http://www.freesoft.org/CIE/RFC/1035/39.htm
  *
- * $Id: dns.php,v 1.4 2010-02-18 06:39:07 oops Exp $
+ * $Id$
  */
 Class sThread_DNS {
 	static public $clearsession = true;

@@ -12,7 +12,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2009 OOPS.ORG
  * @license     BSD License
- * @version     CVS: $Id: sThread.php,v 1.20 2010-02-22 09:43:22 oops Exp $
+ * @version     CVS: $Id$
  * @link        http://pear.oops.org/package/sThread
  * @since       File available since relase 1.0.0
  */
