@@ -2,7 +2,7 @@
 /*
  * sThread MYSQL module
  * 
- * $Id: mysql.php,v 1.3 2010-02-22 09:43:22 oops Exp $
+ * $Id$
  * See also http://forge.mysql.com/wiki/MySQL_Internals_ClientServer_Protocol
  *
  */

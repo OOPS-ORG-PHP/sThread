@@ -13,7 +13,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2009 OOPS.ORG
  * @license     BSD License
- * @version     CVS: $Id: Module.php,v 1.6 2009-09-30 18:19:37 oops Exp $
+ * @version     CVS: $Id$
  * @link        http://pear.oops.org/package/sThread
  */
 Class sThread_Module {

@@ -13,7 +13,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2009 OOPS.ORG
  * @license     BSD License
- * @version     CVS: $Id: Log.php,v 1.4 2010-02-08 12:31:53 oops Exp $
+ * @version     CVS: $Id$
  * @link        http://pear.oops.org/package/sThread
  */
 Class sThread_Log {

@@ -13,7 +13,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2009 OOPS.ORG
  * @license     BSD License
- * @version     CVS: $Id: Addr.php,v 1.5 2010-02-18 05:22:49 oops Exp $
+ * @version     CVS: $Id$
  * @link        http://pear.oops.org/package/sThread
  */
 
@@ -28,7 +28,7 @@ require_once 'ePrint.php';
  * @author     JoungKyun.Kim <http://oops.org>
  * @copyright  (c) 2009, JoungKyun.Kim
  * @license    BSD License
- * @version    CVS: $Id: Addr.php,v 1.5 2010-02-18 05:22:49 oops Exp $
+ * @version    CVS: $Id$
  */
 Class sThread_Address {
 

@@ -1,7 +1,7 @@
 <?php
 /*
  * sThread HTTP module
- * $Id: http.php,v 1.6 2010-02-18 05:22:49 oops Exp $
+ * $Id$
  *
  * Recommand of check page size is under 4KB.
  * If over 100K document, increase event_buffer_read size to 40960!!!

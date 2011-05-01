@@ -2,7 +2,7 @@
 /*
  * sThread MEMCACHED module
  * 
- * $Id: memcached.php,v 1.2 2010-02-08 12:32:16 oops Exp $
+ * $Id$
  * This is don't support binary data protocol!
  *
  */
