@@ -468,6 +468,9 @@ Class sThread_MYSQL {
 		$server->protocol_version = ord ($buffer[0]);
 
 		$server_version_length = $handshake_length - 44;
+		// for mysql 5.5
+		if ( preg_match ('/mysql_native_password/', $buffer) )
+			$server_version_length -= 22;
 		$server->server_version = substr ($buffer, 1, $server_version_length - 1);
 		$buffer = substr ($buffer, $server_version_length);
 		$buf = unpack ('L', $buffer);
