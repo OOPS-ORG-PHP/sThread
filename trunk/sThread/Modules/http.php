@@ -281,7 +281,8 @@ Class sThread_HTTP {
 			$v = substr ($v, $pos + 2);
 		}
 
-		self::$sess->data[$key] = preg_replace ("/([^\r]\n)\r\n$/", '\\1', self::$sess->data[$key]);
+		//self::$sess->data[$key] = preg_replace ("/([^\r]\n)\r\n$/", '\\1', self::$sess->data[$key]);
+		self::$sess->data[$key] = preg_replace ("/\r\n$/", '', self::$sess->data[$key]);
 		self::$sess->data[$key] .= $v;
 	}
 	// }}}
