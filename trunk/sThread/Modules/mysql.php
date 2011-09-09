@@ -36,9 +36,9 @@ Class sThread_MYSQL {
 
 	/* user define variable */
 	static private $server;
-	static private $qstatus = 0;
-	static private $columnno = 0;
-	static private $columnid = 0;
+	static private $qstatus;
+	static private $columnno;
+	static private $columnid;
 	static private $rowid;
 	static private $column;
 	static private $r;
@@ -58,15 +58,20 @@ Class sThread_MYSQL {
 		self::$clearsession = true;
 		self::$port         = 3306;
 
-		self::$server       = '';
-		self::$qstatus      = 0;
-		self::$columnno     = 0;
-		self::$columnid     = 0;
-		self::$rowid        = 0;
+		self::$server       = array ();
+		self::$qstatus      = array ();
+		self::$columnno     = array ();
+		self::$columnid     = array ();
+		self::$rowid        = array ();
 		self::$column       = array ();
 		self::$r			= array ();
 	}
 	// }}}
+
+	function init_variable (&$v) {
+		if ( ! $v && ! is_numeric ($v) )
+			$v = 0;
+	}
 
 	// {{{ (int) sThread_MYSQL::check_buf_status ($status)
 	function check_buf_status ($status) {
@@ -154,11 +159,11 @@ Class sThread_MYSQL {
 	 * 는 존재하지 않아도 된다.
 	 */
 	function clear_session ($key) {
-		self::$server = '';
-		self::$qstatus  = 0;
-		self::$columnno = 0;
-		self::$columnid = 0;
-		self::$rowid    = 0;
+		self::$server = array ();
+		self::$qstatus  = array ();
+		self::$columnno = array ();
+		self::$columnid = array ();
+		self::$rowid    = array ();
 		self::$column   = array ();
 		self::$r        = array ();
 		return;
@@ -197,7 +202,7 @@ Class sThread_MYSQL {
 			return false;
 
 		$sess->recv[$key] = substr ($sess->recv[$key], 4);
-		self::parse_handshake ($sess->recv[$key], self::$server);
+		self::parse_handshake ($sess->recv[$key], self::$server[$key]);
 		return true;
 	} // }}}
 
@@ -206,12 +211,12 @@ Class sThread_MYSQL {
 		list ($host, $port, $type) = $sess->addr[$key];
 		$opt = $sess->opt[$key];
 
-		self::$server->user     = $opt->user;
-		self::$server->passwd   = $opt->pass;
-		self::$server->database = $opt->database;
-		self::$server->query    = $opt->query;
+		self::$server[$key]->user     = $opt->user;
+		self::$server[$key]->passwd   = $opt->pass;
+		self::$server[$key]->database = $opt->database;
+		self::$server[$key]->query    = $opt->query;
 
-		return self::send_authenication (self::$server);
+		return self::send_authenication (self::$server[$key]);
 	} // }}}
 
 	// {{{ (bool) function mysql_handshake (&$sess, $key, $recv)
@@ -257,7 +262,7 @@ Class sThread_MYSQL {
 
 	// {{{ (binary) function mysql_sendquery (&$sess, $key)
 	function mysql_sendquery (&$sess, $key) {
-		return self::query_packet (self::MYSQL_COM_QUERY, self::$server->query);
+		return self::query_packet (self::MYSQL_COM_QUERY, self::$server[$key]->query);
 	} // }}}
 
 	// {{{ (bool) function mysql_queryres (&$sess, $key, $recv)
@@ -271,11 +276,15 @@ Class sThread_MYSQL {
 
 		list ($host, $port, $type) = $sess->addr[$key];
 
+		self::init_variable (self::$qstatus[$key]);
+		self::init_variable (self::$columnno[$key]);
+		self::init_variable (self::$columnid[$key]);
+
 		while ( true ) {
 			$length = self::packet_length ($sess->recv[$key]);
 			$packet_number = ord ($sess->recv[$key][3]);
 
-			if ( $packet_number !== (self::$qstatus + 1) ) {
+			if ( $packet_number !== (self::$qstatus[$key] + 1) ) {
 				Vari::$res->status[$key] = array (
 					"{$host}:{$port}",
 					false,
@@ -289,7 +298,7 @@ Class sThread_MYSQL {
 				return false;
 
 			// Result Set Header Packet
-			if ( self::$qstatus == 0 ) {
+			if ( self::$qstatus[$key] == 0 ) {
 				if ( self::parse_result ($r, $buf) != self::MYSQL_RET_QUERY ) {
 					Vari::$res->status[$key] = array (
 						"{$host}:{$port}",
@@ -299,39 +308,39 @@ Class sThread_MYSQL {
 					fwrite ($sess->sock[$key], self::quit_packet (), 5);
 					return null;
 				}
-				self::$columnno = self::length_coded_binary ($buf);
-				self::$qstatus++;
+				self::$columnno[$key] = self::length_coded_binary ($buf);
+				self::$qstatus[$key]++;
 
 				$sess->recv[$key] = substr ($sess->recv[$key], $length + 4);
 				continue;
 			}
 
 			// Column Descriptors
-			if ( self::$qstatus > 0 && self::$qstatus < self::$columnno + 1 ) {
-				self::$column[self::$columnid]->catalog = self::length_coded_string ($buf);
-				self::$column[self::$columnid]->db = self::length_coded_string ($buf);
-				self::$column[self::$columnid]->table = self::length_coded_string ($buf);
-				self::$column[self::$columnid]->org_table = self::length_coded_string ($buf);
-				self::$column[self::$columnid]->name = self::length_coded_string ($buf);
-				self::$column[self::$columnid]->old_name = self::length_coded_string ($buf);
-				self::$column[self::$columnid]->filler = ord ($buf[0]);
-				self::$column[self::$columnid]->charsetnr = unpack ('S', substr ($buf, 1, 2));
-				self::$column[self::$columnid]->length = unpack ('L', substr ($buf, 3, 4));
-				self::$column[self::$columnid]->type = '0x' . dechex (ord ($buf[7]));
-				self::$column[self::$columnid]->flag = substr ($buf, 8, 2);
-				self::$column[self::$columnid]->decimals = $buf[10];
-				self::$column[self::$columnid]->filler = unpack ('S', substr ($buf, 11, 2));
+			if ( self::$qstatus[$key] > 0 && self::$qstatus[$key] < self::$columnno[$key] + 1 ) {
+				self::$column[self::$columnid[$key]]->catalog = self::length_coded_string ($buf);
+				self::$column[self::$columnid[$key]]->db = self::length_coded_string ($buf);
+				self::$column[self::$columnid[$key]]->table = self::length_coded_string ($buf);
+				self::$column[self::$columnid[$key]]->org_table = self::length_coded_string ($buf);
+				self::$column[self::$columnid[$key]]->name = self::length_coded_string ($buf);
+				self::$column[self::$columnid[$key]]->old_name = self::length_coded_string ($buf);
+				self::$column[self::$columnid[$key]]->filler = ord ($buf[0]);
+				self::$column[self::$columnid[$key]]->charsetnr = unpack ('S', substr ($buf, 1, 2));
+				self::$column[self::$columnid[$key]]->length = unpack ('L', substr ($buf, 3, 4));
+				self::$column[self::$columnid[$key]]->type = '0x' . dechex (ord ($buf[7]));
+				self::$column[self::$columnid[$key]]->flag = substr ($buf, 8, 2);
+				self::$column[self::$columnid[$key]]->decimals = $buf[10];
+				self::$column[self::$columnid[$key]]->filler = unpack ('S', substr ($buf, 11, 2));
 				$buf = substr ($buf, 13);
-				self::$column[self::$columnid++]->default = self::length_coded_binary ($buf);
+				self::$column[self::$columnid[$key]++]->default = self::length_coded_binary ($buf);
 
-				self::$qstatus++;
+				self::$qstatus[$key]++;
 
 				$sess->recv[$key] = substr ($sess->recv[$key], $length + 4);
 				continue;
 			}
 
 			// EOF Packet: end of Field Packets
-			if ( self::$qstatus == (self::$columnno + 1) ) {
+			if ( self::$qstatus[$key] == (self::$columnno[$key] + 1) ) {
 				if ( self::parse_result ($r, $buf) != self::MYSQL_RET_EOF ) {
 					Vari::$res->status[$key] = array (
 						"{$host}:{$port}",
@@ -342,13 +351,13 @@ Class sThread_MYSQL {
 					return null;
 				}
 
-				self::$qstatus++;
+				self::$qstatus[$key]++;
 				$sess->recv[$key] = substr ($sess->recv[$key], $length + 4);
 				continue;
 			}
 
 			// Row Data Packets: row contents
-			if ( self::$qstatus > (self::$columnno + 1) ) {
+			if ( self::$qstatus[$key] > (self::$columnno[$key] + 1) ) {
 				//
 				// end of packet
 				// ----------------------------------------------------------------
@@ -359,12 +368,14 @@ Class sThread_MYSQL {
 				// ----------------------------------------------------------------
 				//
 
-				for ( $i=0; $i<self::$columnno; $i++ ) {
+				self::init_variable (self::$rowid[$key]);
+
+				for ( $i=0; $i<self::$columnno[$key]; $i++ ) {
 					$colname = self::$column[$i]->name->data;
-					self::$r[self::$rowid]->$colname = self::length_coded_string ($buf)->data;
+					self::$r[self::$rowid[$key]]->$colname = self::length_coded_string ($buf)->data;
 				}
-				self::$rowid++;
-				self::$qstatus++;
+				self::$rowid[$key]++;
+				self::$qstatus[$key]++;
 				$sess->recv[$key] = substr ($sess->recv[$key], $length + 4);
 			}
 		}
