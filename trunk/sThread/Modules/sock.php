@@ -94,7 +94,7 @@ Class sThread_SOCK {
 
 	// {{{ (string) sThread_SOCK::sock_request (&$sess, $key)
 	function sock_request (&$sess, $key) {
-		return true;
+		return "\r\n";
 	}
 	// }}}
 }

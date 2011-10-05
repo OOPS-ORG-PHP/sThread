@@ -112,6 +112,7 @@ Class sThread {
 			}
 			$sess->opt[$key] = sThread_Address::extraOption ($newline);
 			$sess->addr[$key] = explode (':', $newline);
+			$sess->proto[$key] = $protocol;
 
 			self::explodeAddr ($host, $port, $type, $newline);
 			$addr = "{$protocol}://{$host}:{$port}";
