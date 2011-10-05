@@ -27,7 +27,6 @@ Class sThread_ECHO {
 	// {{{ (void) sThread_ECHO::init (void)
 	function init () {
 		self::$clearsession = false;
-		self::$port = 11211;
 	}
 	// }}}
 
@@ -123,6 +122,7 @@ Class sThread_ECHO {
 		$sess->recv[$key] = '';
 		return true;
 	}
+	// }}}
 }
 
 ?>
