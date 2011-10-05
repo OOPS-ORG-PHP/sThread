@@ -222,50 +222,7 @@ Class sThread_FTP {
 		return true;
 	} // }}}
 
-
-	/*
-	// {{{ (string) sThread_FTP::ftp_request (&$sess, $key)
-	function ftp_request (&$sess, $key) {
-		return "stats\r\n";
-	}
-	// }}}
-
-	// {{{ (boolean) sThread_FTP::ftp_response (&$sess, $key, $recv)
-	function ftp_response (&$sess, $key, $recv) {
-		if ( ! $recv )
-			return false;
-
-		list ($host, $port, $type) = $sess->addr[$key];
-		$sess->recv[$key] .= $recv;
-
-		if ( strncmp ($sess->recv[$key], 'STAT pid ', 9) ) {
-			Vari::$res->status[$key] = array (
-				"{$host}:{$port}",
-				false,
-				'Protocol error: Invalid response'
-			);
-			return null;
-		}
-
-		if ( ! preg_match ('/(END|ERROR)$/', trim ($sess->recv[$key])) )
-			return false;
-
-		if ( preg_match ('/ERROR$/', trim ($sess->recv[$key])) ) {
-			Vari::$res->status[$key] = array (
-				"{$host}:{$port}",
-				false,
-				'Protocol error: Protocol Error'
-			);
-			return null;
-		}
-
-		$sess->recv[$key] = '';
-		return true;
-	}
-
-	 */
-
-	// {{{ (string) sThread_FTP::ftp_request (&$sess, $key)
+	// {{{ (string) sThread_FTP::ftp_quit (&$sess, $key)
 	function ftp_quit (&$sess, $key) {
 		return "quit\r\n";
 	}
