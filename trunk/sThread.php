@@ -122,7 +122,7 @@ Class sThread {
 			$sess->sock[$key] = @stream_socket_client (
 				$addr, $errno, $errstr, self::$tmout, $async
 			);
-			usleep (100);
+			usleep (200);
 
 			if ( self::$async !== true && ! is_resource ($sess->sock[$key]) ) {
 				if ( ePrint::$debugLevel >= Vari::DEBUG1 )
@@ -411,6 +411,8 @@ Class sThread {
 					event_buffer_free ($sess->event[$key]);
 			}
 		}
+
+		self::$mod->$type->init();
 	}
 
 	function socketClose ($key) {
