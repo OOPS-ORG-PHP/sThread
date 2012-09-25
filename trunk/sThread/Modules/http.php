@@ -1,11 +1,19 @@
 <?php
-/*
+/**
  * sThread HTTP module
- * $Id$
  *
  * Recommand of check page size is under 4KB.
  * If over 100K document, increase event_buffer_read size to 40960!!!
  *
+ * @category    Network
+ * @package     sThread
+ * @subpackage  sThread_Module
+ * @author      JoungKyun.Kim <http://oops.org>
+ * @copyright   1997-2012 OOPS.ORG
+ * @license     BSD License
+ * @version     $Id$
+ * @link        http://pear.oops.org/package/sThread
+ * @filesource
  */
 Class sThread_HTTP {
 	// {{{ properties

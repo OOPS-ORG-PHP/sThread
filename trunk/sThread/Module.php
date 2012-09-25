@@ -1,20 +1,18 @@
 <?php
 /**
  *
- * Single Thread Monitoring Module API
+ * Single Thread Monitoring Module API<br>
  * File: sThread/Module.php
- *
- * Copyright (c) 1997-2009 JoungKyun.Kim
- *
- * LICENSE: BSD license
  *
  * @category    Network
  * @package     sThread
+ * @subpackage  sThread_CORE
  * @author      JoungKyun.Kim <http://oops.org>
- * @copyright   1997-2009 OOPS.ORG
+ * @copyright   1997-2012 OOPS.ORG
  * @license     BSD License
- * @version     CVS: $Id$
+ * @version     $Id$
  * @link        http://pear.oops.org/package/sThread
+ * @filesource
  */
 Class sThread_Module {
 	// {{{ properties

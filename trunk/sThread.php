@@ -1,18 +1,14 @@
 <?php
 /**
- * Project: sThread :: Single Thread Monitoring Agent API
+ * Project: sThread :: Single Thread Monitoring Agent API<br>
  * File: sThread.php
- *
- * Copyright (c) 1997-2009 JoungKyun.Kim
- *
- * LICENSE: BSD license
  *
  * @category    Network
  * @package     sThread
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2009 OOPS.ORG
  * @license     BSD License
- * @version     CVS: $Id$
+ * @version     $Id$
  * @link        http://pear.oops.org/package/sThread
  * @since       File available since relase 1.0.0
  */

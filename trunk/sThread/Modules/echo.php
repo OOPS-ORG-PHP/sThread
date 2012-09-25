@@ -1,10 +1,17 @@
 <?php
-/*
- * sThread ECHO module
- * 
- * $Id$
+/**
+ * sThread ECHO module<br>
  * Don't support utp protocol
  *
+ * @category    Network
+ * @package     sThread
+ * @subpackage  sThread_Module
+ * @author      JoungKyun.Kim <http://oops.org>
+ * @copyright   1997-2012 OOPS.ORG
+ * @license     BSD License
+ * @version     $Id$
+ * @link        http://pear.oops.org/package/sThread
+ * @filesource
  */
 Class sThread_ECHO {
 	// {{{ properteis

@@ -1,9 +1,17 @@
 <?php
-/*
+/**
  * sThread DNS module
- * See also http://www.freesoft.org/CIE/RFC/1035/39.htm
  *
- * $Id$
+ * @category    Network
+ * @package     sThread
+ * @subpackage  sThread_Module
+ * @author      JoungKyun.Kim <http://oops.org>
+ * @copyright   1997-2012 OOPS.ORG
+ * @license     BSD License
+ * @version     $Id$
+ * @link        http://pear.oops.org/package/sThread
+ * @see         http://www.freesoft.org/CIE/RFC/1035/39.htm
+ * @filesource
  */
 Class sThread_DNS {
 	static public $clearsession = true;
