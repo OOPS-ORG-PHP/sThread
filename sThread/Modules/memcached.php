@@ -1,10 +1,18 @@
 <?php
-/*
+/**
  * sThread MEMCACHED module
  * 
- * $Id$
  * This is don't support binary data protocol!
  *
+ * @category    Network
+ * @package     sThread
+ * @subpackage  sThread_Module
+ * @author      JoungKyun.Kim <http://oops.org>
+ * @copyright   1997-2012 OOPS.ORG
+ * @license     BSD License
+ * @version     $Id$
+ * @link        http://pear.oops.org/package/sThread
+ * @filesource
  */
 Class sThread_MEMCACHED {
 	// {{{ properteis

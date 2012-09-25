@@ -1,10 +1,18 @@
 <?php
-/*
+/**
  * sThread FTP module
  * 
- * $Id$
  * This is supported only until login process
  *
+ * @category    Network
+ * @package     sThread
+ * @subpackage  sThread_Module
+ * @author      JoungKyun.Kim <http://oops.org>
+ * @copyright   1997-2012 OOPS.ORG
+ * @license     BSD License
+ * @version     $Id$
+ * @link        http://pear.oops.org/package/sThread
+ * @filesource
  */
 Class sThread_FTP {
 	// {{{ properteis
