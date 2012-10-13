@@ -11,14 +11,14 @@
 		<email>joungkyun@gmail.com</email>
 		<active>yes</active>
 	</lead>
-	<date>2011-10-06</date>
-	<time>00:55:18</time>
+	<date>2012-10-14</date>
+	<time>05:32:35</time>
 	<version>
-		<release>0.0.1</release>
-		<api>0.0.1</api>
+		<release>1.0.0</release>
+		<api>1.0.0</api>
 	</version>
 	<stability>
-		<release>devel</release>
+		<release>stable</release>
 		<api>stable</api>
 	</stability>
 	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
@@ -26,18 +26,18 @@
 </notes>
 	<contents>
 		<dir name="/">
-			<file role="php" md5sum="206c8f0692786ae587c9f1a5b9a3fc3d" name="sThread/Modules/dns.php" />
-			<file role="php" md5sum="8ecb834e49e0f86bd150a78eb4b3e838" name="sThread/Modules/echo.php" />
-			<file role="php" md5sum="2838f0c1112fea8f6bcaf99603771eca" name="sThread/Modules/ftp.php" />
-			<file role="php" md5sum="2cc564d916b3bfe374668c478dc5670c" name="sThread/Modules/http.php" />
-			<file role="php" md5sum="42ebf03097a2c5f2fe8233a5dacdc73b" name="sThread/Modules/memcached.php" />
-			<file role="php" md5sum="7728011f7edafd7a9dbb5e1cf8524159" name="sThread/Modules/mysql.php" />
-			<file role="php" md5sum="e2b4481af07b3c74897fe11421a3398f" name="sThread/Modules/sock.php" />
-			<file role="php" md5sum="124e63f84f78b904e4ce201af721e80a" name="sThread/Addr.php" />
-			<file role="php" md5sum="f76a26547a812dce8cc1f7cf0583f7d4" name="sThread/Log.php" />
-			<file role="php" md5sum="3bf85d5f984e731df6c8a00a0d2b860b" name="sThread/Module.php" />
-			<file role="php" md5sum="ee43febf826bcf76af9fcd98ae77927b" name="sThread/Vari.php" />
-			<file role="php" md5sum="3d81a34db0a5dacaae4abfb146a04702" name="sThread.php" />
+			<file role="php" md5sum="0e90f935d5e2b36b6263f18e72ca48fb" name="sThread/Modules/dns.php" />
+			<file role="php" md5sum="48043fb11623e6300fa71fbf2a12be81" name="sThread/Modules/echo.php" />
+			<file role="php" md5sum="0d415730481940386f698e7ddb3b7bbe" name="sThread/Modules/ftp.php" />
+			<file role="php" md5sum="efcaee27a133a6ff3783724c4f29efcd" name="sThread/Modules/http.php" />
+			<file role="php" md5sum="3a4c9307a3b4a8ff64ee8baa808c3631" name="sThread/Modules/memcached.php" />
+			<file role="php" md5sum="a470d411b9ac2da3c66fab83edd1e930" name="sThread/Modules/mysql.php" />
+			<file role="php" md5sum="188526eadfe3b2ee6250d576f4644d0f" name="sThread/Modules/sock.php" />
+			<file role="php" md5sum="3be22a942969a47d7976dd2dbd9d6b02" name="sThread/Addr.php" />
+			<file role="php" md5sum="b5a00dceafdb4a3862b340e424e12679" name="sThread/Log.php" />
+			<file role="php" md5sum="7929c3a4706238763c98cd0617cd678c" name="sThread/Module.php" />
+			<file role="php" md5sum="09821888bb405039e775d03c8cb02741" name="sThread/Vari.php" />
+			<file role="php" md5sum="4f37971462695c723fb8326474452ccc" name="sThread.php" />
 		</dir>
 	</contents>
 	<dependencies>
@@ -64,14 +64,14 @@
 	<changelog>
 		<release>
 			<version>
-				<release>0.0.1</release>
-				<api>0.0.1</api>
+				<release>1.0.0</release>
+				<api>1.0.0</api>
 			</version>
 			<stability>
-				<release>devel</release>
+				<release>stable</release>
 				<api>stable</api>
 			</stability>
-			<date>2011-10-06</date>
+			<date>2012-10-14</date>
 			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
 			<notes>* regist
 </notes>
