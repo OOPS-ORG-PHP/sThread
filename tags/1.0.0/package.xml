@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package version="2.0" packagerversion="1.7.2" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+	<!-- $Id$ -->
+	<name>sThread</name>
+	<channel>pear.oops.org</channel>
+	<summary>Single Thread Connector</summary>
+	<description>Use multiple connection with single thread process</description>
+	<lead>
+		<name>JoungKyun.Kim</name>
+		<user>joungkyun</user>
+		<email>joungkyun@gmail.com</email>
+		<active>yes</active>
+	</lead>
+	<date>2012-10-14</date>
+	<time>05:32:35</time>
+	<version>
+		<release>1.0.0</release>
+		<api>1.0.0</api>
+	</version>
+	<stability>
+		<release>stable</release>
+		<api>stable</api>
+	</stability>
+	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+	<notes>* regist
+</notes>
+	<contents>
+		<dir name="/">
+			<file role="php" md5sum="0e90f935d5e2b36b6263f18e72ca48fb" name="sThread/Modules/dns.php" />
+			<file role="php" md5sum="48043fb11623e6300fa71fbf2a12be81" name="sThread/Modules/echo.php" />
+			<file role="php" md5sum="0d415730481940386f698e7ddb3b7bbe" name="sThread/Modules/ftp.php" />
+			<file role="php" md5sum="efcaee27a133a6ff3783724c4f29efcd" name="sThread/Modules/http.php" />
+			<file role="php" md5sum="3a4c9307a3b4a8ff64ee8baa808c3631" name="sThread/Modules/memcached.php" />
+			<file role="php" md5sum="a470d411b9ac2da3c66fab83edd1e930" name="sThread/Modules/mysql.php" />
+			<file role="php" md5sum="188526eadfe3b2ee6250d576f4644d0f" name="sThread/Modules/sock.php" />
+			<file role="php" md5sum="3be22a942969a47d7976dd2dbd9d6b02" name="sThread/Addr.php" />
+			<file role="php" md5sum="b5a00dceafdb4a3862b340e424e12679" name="sThread/Log.php" />
+			<file role="php" md5sum="7929c3a4706238763c98cd0617cd678c" name="sThread/Module.php" />
+			<file role="php" md5sum="09821888bb405039e775d03c8cb02741" name="sThread/Vari.php" />
+			<file role="php" md5sum="4f37971462695c723fb8326474452ccc" name="sThread.php" />
+		</dir>
+	</contents>
+	<dependencies>
+		<required>
+			<php>
+				<min>5.0.0</min>
+			</php>
+			<pearinstaller>
+				<min>1.4.3</min>
+			</pearinstaller>
+			<package>
+				<name>libevent</name>
+				<channel>pecl</channel>
+				<min>0.0.2</min>
+			</package>
+			<package>
+				<name>ePrint</name>
+				<channel>pear.oops.org</channel>
+				<min>1.0.1</min>
+			</package>
+		</required>
+	</dependencies>
+	<phprelease />
+	<changelog>
+		<release>
+			<version>
+				<release>1.0.0</release>
+				<api>1.0.0</api>
+			</version>
+			<stability>
+				<release>stable</release>
+				<api>stable</api>
+			</stability>
+			<date>2012-10-14</date>
+			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+			<notes>* regist
+</notes>
+		</release>
+	</changelog>
+</package>
