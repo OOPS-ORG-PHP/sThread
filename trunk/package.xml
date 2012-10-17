@@ -11,8 +11,8 @@
 		<email>joungkyun@gmail.com</email>
 		<active>yes</active>
 	</lead>
-	<date>2012-10-17</date>
-	<time>17:48:39</time>
+	<date>2012-10-18</date>
+	<time>02:14:11</time>
 	<version>
 		<release>1.0.1</release>
 		<api>1.0.0</api>
@@ -23,21 +23,22 @@
 	</stability>
 	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
 	<notes>* fixed worng access to empty property when clear session
+* add phpDocument style comments
 </notes>
 	<contents>
 		<dir name="/">
-			<file role="php" md5sum="0e90f935d5e2b36b6263f18e72ca48fb" name="sThread/Modules/dns.php" />
-			<file role="php" md5sum="48043fb11623e6300fa71fbf2a12be81" name="sThread/Modules/echo.php" />
-			<file role="php" md5sum="0d415730481940386f698e7ddb3b7bbe" name="sThread/Modules/ftp.php" />
-			<file role="php" md5sum="efcaee27a133a6ff3783724c4f29efcd" name="sThread/Modules/http.php" />
-			<file role="php" md5sum="3a4c9307a3b4a8ff64ee8baa808c3631" name="sThread/Modules/memcached.php" />
-			<file role="php" md5sum="a470d411b9ac2da3c66fab83edd1e930" name="sThread/Modules/mysql.php" />
-			<file role="php" md5sum="188526eadfe3b2ee6250d576f4644d0f" name="sThread/Modules/sock.php" />
-			<file role="php" md5sum="3be22a942969a47d7976dd2dbd9d6b02" name="sThread/Addr.php" />
-			<file role="php" md5sum="b5a00dceafdb4a3862b340e424e12679" name="sThread/Log.php" />
-			<file role="php" md5sum="7929c3a4706238763c98cd0617cd678c" name="sThread/Module.php" />
-			<file role="php" md5sum="09821888bb405039e775d03c8cb02741" name="sThread/Vari.php" />
-			<file role="php" md5sum="193ae9243c26518f28c9e56f9ccb7671" name="sThread.php" />
+			<file role="php" md5sum="36673a1c2b6f427a3691a22eb2e5a3d4" name="sThread/Modules/dns.php" />
+			<file role="php" md5sum="981d9afe75950dfff61992f6905bcd0c" name="sThread/Modules/echo.php" />
+			<file role="php" md5sum="d7d709547a0829d24291832e9e60ad5e" name="sThread/Modules/ftp.php" />
+			<file role="php" md5sum="ba8d001713f3b2b077a62515d0d33b12" name="sThread/Modules/http.php" />
+			<file role="php" md5sum="05454a0f9a4a55a379b9a92e680f8420" name="sThread/Modules/memcached.php" />
+			<file role="php" md5sum="225ee55a8f0900f3021aeac7ff6b10e2" name="sThread/Modules/mysql.php" />
+			<file role="php" md5sum="b66370e26bc518f55ae38c08e3819019" name="sThread/Modules/sock.php" />
+			<file role="php" md5sum="5a918e59111e987a90c9853eb57e74fc" name="sThread/Addr.php" />
+			<file role="php" md5sum="d4643d233b79fc34be5d88bf9cb58a20" name="sThread/Log.php" />
+			<file role="php" md5sum="c4954cdee7be17e60c0606cf249a5f05" name="sThread/Module.php" />
+			<file role="php" md5sum="14ab5b43877ddefcc7459ed9cb4aa078" name="sThread/Vari.php" />
+			<file role="php" md5sum="c1bac43830b08945afb135e54e0b64df" name="sThread.php" />
 		</dir>
 	</contents>
 	<dependencies>
@@ -71,7 +72,7 @@
 				<release>stable</release>
 				<api>stable</api>
 			</stability>
-			<date>2012-10-17</date>
+			<date>2012-10-18</date>
 			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
 			<notes>* fixed worng access to empty property when clear session
 </notes>

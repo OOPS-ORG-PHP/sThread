@@ -1,6 +1,5 @@
 <?php
 /**
- *
  * Parsing API of Host Address format<br>
  * File: sThread/Addr.php
  *
@@ -15,22 +14,32 @@
  * @filesource
  */
 
+/**
+ * include ePrint package
+ */
 require_once 'ePrint.php';
 
 /**
+ * Host 주소 형식 파싱 API
  *
- * Parsing API of Host Address format
- *
- * @category   Network
- * @package    sThread
- * @author     JoungKyun.Kim <http://oops.org>
- * @copyright  (c) 2009, JoungKyun.Kim
- * @license    BSD License
- * @version    CVS: $Id$
+ * @category    Network
+ * @package     sThread
+ * @subpackage  sThread_CORE
+ * @author      JoungKyun.Kim <http://oops.org>
+ * @copyright   1997-2012 OOPS.ORG
+ * @license     BSD License
+ * @version     $Id$
+ * @link        http://pear.oops.org/package/sThread
  */
 Class sThread_Address {
-
 	// {{{ (string) sThread_Address::parse ($buf)
+	/**
+	 * sThread로 전달된 주소및 옵션의 유효성 검증 및 파싱
+	 *
+	 * @access public
+	 * @return string
+	 * @param  string
+	 */
 	function parse ($buf) {
 		$extra = '';
 		if ( preg_match ('/^(.+)\|(.+)$/', $buf, $matches) ) {
@@ -106,6 +115,13 @@ Class sThread_Address {
 	} //  }}}
 
 	// {{{ (object) sThread_Address::extraOption (&$type)
+	/**
+	 * sThread로 주어진 주소값에서 옵션을 분리
+	 *
+	 * @access public
+	 * @return object
+	 * @param  string
+	 */
 	function extraOption (&$type) {
 		if ( ! preg_match ('/^(.+)\|(.+)$/', $type, $matches) )
 			return false;

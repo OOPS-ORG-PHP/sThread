@@ -6,42 +6,167 @@
  * @category    Network
  * @package     sThread
  * @author      JoungKyun.Kim <http://oops.org>
- * @copyright   1997-2009 OOPS.ORG
+ * @copyright   1997-2012 OOPS.ORG
+ * @license     BSD License
+ * @version     $Id$
+ * @link        http://pear.oops.org/package/sThread
+ * @since       File available since relase 1.0.0
+ * @filesource
+ */
+
+// {{{ 기본 include package
+/**
+ * include ePrint package
+ */
+require_once 'ePrint.php';
+/**
+ * sThread에서 사용하는 공통 변수 관리 Class
+ */
+require_once 'sThread/Vari.php';
+/**
+ * sThread에서 사용하는 모듈 관리 Class
+ */
+require_once 'sThread/Module.php';
+/**
+ * sThread에서 사용하는 주소 관리 Class
+ */
+require_once 'sThread/Addr.php';
+/**
+ * sThread의 logging Class
+ */
+require_once 'sThread/Log.php';
+// }}}
+
+// {{{ libevent call functions
+/**
+ * libevent에서 사용되는 read callback 함수
+ *
+ * @return bool
+ * @param  resource libevent resource
+ * @param  array    callback argument
+ */
+function sThread_readCallback ($buf, $arg) {
+	return sThread::readCallback ($buf, $arg);
+}
+
+/**
+ * libevent에서 사용되는 write callback 함수
+ *
+ * @return bool
+ * @param  resource libevent resource
+ * @param  array    callback argument
+ */
+function sThread_writeCallback ($buf, $arg) {
+	return sThread::writeCallback ($buf, $arg);
+}
+
+/**
+ * libevent에서 사용되는 예외 callback 함수
+ *
+ * 이 함수는 아무런 작동을 하지 않는다.
+ *
+ * @return null
+ * @param  resource libevent resource
+ * @param  array    callback argument
+ */
+function sThread_exceptionCallback ($buf, $arg) { }
+// }}}
+
+/**
+ * sThread 패키지의 메인 Class
+ *
+ * @category    Network
+ * @package     sThread
+ * @author      JoungKyun.Kim <http://oops.org>
+ * @copyright   1997-2012 OOPS.ORG
  * @license     BSD License
  * @version     $Id$
  * @link        http://pear.oops.org/package/sThread
  * @since       File available since relase 1.0.0
  */
-
-require_once 'ePrint.php';
-require_once 'sThread/Vari.php';
-require_once 'sThread/Module.php';
-require_once 'sThread/Addr.php';
-require_once 'sThread/Log.php';
-
-function sThread_readCallback ($buf, $arg) {
-	return sThread::readCallback ($buf, $arg);
-}
-
-function sThread_writeCallback ($buf, $arg) {
-	return sThread::writeCallback ($buf, $arg);
-}
-
-function sThread_exceptionCallback ($buf, $arg) { }
-
 Class sThread {
-	const MAJOR_VERSION = 0;
+	// {{{ properties
+	// {{{ sThread constants
+	/**#@+
+	 * @access public
+	 */
+	/**
+	 * sThread Major version 번호
+	 */
+	const MAJOR_VERSION = 1;
+	/**
+	 * sThread Minor version 번호
+	 */
 	const MINOR_VERSION = 0;
+	/**
+	 * sThread Patch 레벨 번호
+	 */
 	const PATCH_VERSION = 1;
-	const VERSION = '0.0.1';
+	/**
+	 * sThread 버전
+	 */
+	const VERSION = '1.0.1';
+	/**#@-*/
+	// }}}
 
+	/**#@+
+	 * @access public
+	 */
+	/**
+	 * sThread_Module 패키지에서 등록한 모듈 object
+	 *
+	 * @var object
+	 */
 	static public $mod;
-	static private $tmout;
+	/**
+	 * libevent 동작을 sync로 할지 async로 할지 여부
+	 * 기본값 'false'
+	 *
+	 * @var boolean
+	 */
 	static public $async;
+	/**
+	 * 저장할 로그 파일 이름
+	 *
+	 * @var string
+	 */
 	static public $logfile;
+	/**
+	 * 저장할 로그 파일이름 postfix.
+	 * data function의 format으로 지정해야 한다.
+	 *
+	 * @var string
+	 */
 	static public $logformat;
+	/**
+	 * 로그 저장 여부
+	 * <ul>
+	 *     <li>0  -> 실패한 로그만 저장</li>
+	 *     <li>1  -> 모든 로그 저장</li>
+	 *     <li>-1 -> 로그 저장 안함</li>
+	 * </ul>
+	 *
+	 * @var int
+	 */
 	static public $logtype;
+	/**#@-*/
 
+	/**
+	 * 소켓 연결/읽기/쓰기 타임아웃
+	 *
+	 * @access public
+	 * @var    int
+	 */
+	static private $tmout;
+	// }}}
+
+	// {{{ (object) sThread::__construct (void)
+	/**
+	 * OOP 스타일의 sThread Class 초기화
+	 *
+	 * @access public
+	 * @return object
+	 */
 	function __construct () {
 		self::init ();
 		$this->mod     = &self::$mod;
@@ -53,7 +178,17 @@ Class sThread {
 		$this->logformat = &sThread_Log::$format;
 		$this->logtype   = &sThread_Log::$type;
 	}
+	// }}}
 
+	// {{{ (void) sThread::init ($mod_no_init = false)
+	/**
+	 * sThread Class를 초기화 한다.
+	 *
+	 * @access public
+	 * @return void
+	 * @param  bool (optional) true로 설정을 하면 sThread_Module
+	 *              class를 호출 하지 않는다. 기본값 false.
+	 */
 	function init ($mod_no_init = false) {
 		Vari::$res = (object) array (
 			'total'   => 0,
@@ -84,7 +219,40 @@ Class sThread {
 		self::$logformat = &sThread_Log::$format;
 		self::$logtype   = &sThread_Log::$type;
 	}
+	// }}}
 
+	// {{{ (void) sThread::execute ($host, $tmout = 1, $protocol = 'tcp')
+	/**
+	 * sThread를 실행한다.
+	 *
+	 * 실행 후 결과값은 Vari::$res 와 Vari::$sess 의 값을 확인하면
+	 * 된다.
+	 *
+	 * @access public
+	 * @return void
+	 * @param  mixed  연결 정보.<br>
+	 *         host의 형식은 기본적으로 문자열 또는 배열을 사용할 수 있다.
+	 *
+	 *         주소 형식은 기본적으로 도메인이름 또는 IP주소와 PORT 번호로
+	 *         구성이 된다.
+	 *
+	 *         <code>
+	 *         $host = 'test.domaint.com:80';
+	 *         </code>
+	 *
+	 *         sThread package의 장점은 여러개의 실행을 동시에 할 수 있다는
+	 *         것이므로, 여러개의 주소를 한번에 넘길 경우에는 배열을 이용한다.
+	 *
+	 *         <code>
+	 *         $host = array (
+	 *             'test.domain.com:80',
+	 *             'test1.domain.com:53',
+	 *             'test16.domain.com:80'
+	 *         );
+	 *         </code>
+	 * @param  int    소켓 연결/읽기/쓰기 타임아웃
+	 * @param  string tcp 또는 udp. 기본값 tcp.
+	 */
 	function execute ($hosts, $tmout = 1, $protocol = 'tcp') {
 		if ( ! is_array ($hosts) )
 			$hosts = array ($hosts);
@@ -148,9 +316,9 @@ Class sThread {
 
 			$sess->event[$key] = event_buffer_new (
 					$sess->sock[$key],
-					"sThread_readCallback",
-					"sThread_writeCallback",
-					"sThread_exceptionCallback", array ($key)
+					'sThread_readCallback',
+					'sThread_writeCallback',
+					'sThread_exceptionCallback', array ($key)
 			);
 			event_buffer_timeout_set ($sess->event[$key], self::$tmout, self::$tmout);
 			event_buffer_base_set ($sess->event[$key], $base);
@@ -165,7 +333,22 @@ Class sThread {
 		self::clearEvent ();
 		event_base_free ($base);
 	}
+	// }}}
 
+	// {{{ (bool) sThread::readCallback ($buf, $arg)
+	/**
+	 * libevent read callback
+	 *
+	 * 이 메소드는 외부에서 사용할 필요가 없다. private로
+	 * 지정이 되어야 하나, event_buffer_new api가 class method를
+	 * callback 함수로 사용을 하지 못하게 되어 있어, 외부 wrapper
+	 * 를 통하여 호출을 하기 때문에 public으로 선언이 되었다.
+	 *
+	 * @access public
+	 * @return boolean
+	 * @param  resource libevent resource
+	 * @param  array    callback argument
+	 */
 	function readCallback ($buf, $arg) {
 		list ($key) = $arg;
 		$sess = &Vari::$sess;
@@ -227,7 +410,22 @@ Class sThread {
 
 		return true;
 	}
+	// }}}
 
+	// {{{ (bool) sThread::writeCallback ($buf, $arg)
+	/**
+	 * libevent write callback
+	 *
+	 * 이 메소드는 외부에서 사용할 필요가 없다. private로
+	 * 지정이 되어야 하나, event_buffer_new api가 class method를
+	 * callback 함수로 사용을 하지 못하게 되어 있어, 외부 wrapper
+	 * 를 통하여 호출을 하기 때문에 public으로 선언이 되었다.
+	 *
+	 * @access public
+	 * @return boolean
+	 * @param  resource libevent resource
+	 * @param  array    callback argument
+	 */
 	function writeCallback ($buf, $arg) {
 		list ($key) = $arg;
 		$sess = &Vari::$sess;
@@ -296,8 +494,20 @@ Class sThread {
 
 		$sess->send[$key] = Vari::EVENT_SEND_DONE;
 	}
+	// }}}
 
-	function getCallname ($key) {
+	/*
+	 * Private functions
+	 *
+	// {{{ private (string) sThread::getCallname ($key)
+	/**
+	 * 현재 상태의 세션 handler 이름을 반환
+	 *
+	 * @access private
+	 * @return string|false
+	 * @param  int  세션 키
+	 */
+	private function getCallname ($key) {
 		$sess = &Vari::$sess;
 		self::explodeAddr ($host, $port, $type, $sess->addr[$key]);
 		$event = self::$mod->$type->call_status ($sess->status[$key], true);
@@ -317,8 +527,18 @@ Class sThread {
 
 		return $event;
 	}
+	// }}}
 
-	function currentStatus ($key, $next = false) {
+	// {{{ private (int) sThread::currentStatus ($key, $next = false)
+	/**
+	 * 현재의 처리 단계를 반환
+	 *
+	 * @access private
+	 * @return int 
+	 * @param  int    세션 키
+	 * @param  boolean true로 설정이 되면 처리 단계를 다음으로 전환한다.
+	 */
+	private function currentStatus ($key, $next = false) {
 		$sess = &Vari::$sess;
 		$res  = &Vari::$res;
 		self::explodeAddr ($host, $port, $type, $sess->addr[$key]);
@@ -374,17 +594,46 @@ Class sThread {
 
 		return $is_rw;
 	}
+	// }}}
 
-	function explodeAddr (&$host, &$port, &$type, $v) {
+	// {{{ private (void) sThread::explodeAddr (&$host, &$port, &$type, $v)
+	/**
+	 * 주소 형식 값에서 주소, 분리, 모듈 형식을 분리해 낸다.
+	 *
+	 * @access private
+	 * @return void
+	 * @param  reference     주소 값을 저장할 변수 reference
+	 * @param  reference     포트 값을 저장할 변수 reference
+	 * @param  reference     모듈 이름을 저장할 변수 reference
+	 * @param  array|string  분리되지 않은 문자열 or 배열
+	 */
+	private function explodeAddr (&$host, &$port, &$type, $v) {
 		list ($host, $port, $type) = is_array ($v) ? $v : explode (':', $v);
 		//$type = preg_replace ('/\|.*/', '', $type);
 	}
+	// }}}
 
-	function nextStatus ($key) {
+	// {{{ private (int) sThread::nextStatus ($key)
+	/**
+	 * 다음 처리단계로 전환
+	 *
+	 * @access private
+	 * @return int
+	 * @param  int    세션 키
+	 */
+	private function nextStatus ($key) {
 		return self::currentStatus ($key, true);
 	}
+	// }}}
 
-	function clearEvent () {
+	// {{{ private (void) sThread::clearEvent (void)
+	/**
+	 * 각 세션에서 사용한 변수들 정리 및 소켓 close
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function clearEvent () {
 		$sess = &Vari::$sess;
 
 		foreach ( $sess->status as $key => $val ) {
@@ -411,8 +660,15 @@ Class sThread {
 		if ( ! empty (self::$mod->$type) )
 			self::$mod->$type->init();
 	}
+	// }}}
 
-	function socketClose ($key) {
+	// {{{ private (void) sThread::socketClose ($key)
+	/**
+	 * @access private
+	 * @return void
+	 * @param  int  세션 키
+	 */
+	private function socketClose ($key) {
 		$sess = &Vari::$sess;
 
 		list ($host, $port, $type) = $sess->addr[$key];
@@ -443,5 +699,6 @@ Class sThread {
 		if ( is_resource ($sess->sock[$key]) )
 			fclose ($sess->sock[$key]);
 	}
+	// }}}
 }
 ?>

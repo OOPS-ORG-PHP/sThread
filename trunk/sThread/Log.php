@@ -1,6 +1,5 @@
 <?php
 /**
- *
  * Logging Class of Single Thread Monitoring<br>
  * File: sThread/Log.php
  *
@@ -14,19 +13,58 @@
  * @link        http://pear.oops.org/package/sThread
  * @filesource
  */
+
+/**
+ * sThread Log Class
+ *
+ * @category    Network
+ * @package     sThread
+ * @subpackage  sThread_CORE
+ * @author      JoungKyun.Kim <http://oops.org>
+ * @copyright   1997-2012 OOPS.ORG
+ * @license     BSD License
+ * @version     $Id$
+ * @link        http://pear.oops.org/package/sThread
+ * @filesource
+ */
 Class sThread_Log {
 	// {{{ properties
+	/**
+	 * Log 파일 이름
+	 * @access public
+	 * @var    string
+	 */
 	static public $fname;
+	/**
+	 * Log 파일 postfix
+	 *
+	 * @access public
+	 * @var    stirng
+	 */
 	static public $format = 'Ymd';
-
-	/*
-	 * type 0  -> only falied logging
-	 *      1  -> all logging
-	 *      -1 -> no logging
+	/**
+	 * 로그 저장 동작 여부
+	 * <ul>
+	 *     <li>0  -> 실패한 로그만 저장</li>
+	 *     <li>1  -> 모든 로그 저장</li>
+	 *     <li>-1 -> 로그 저장 안함</li>
+	 * </ul>
+	 *
+	 * @access public
+	 * @var    int
 	 */
 	static public $type = 0;
 	// }}}
 
+	// {{{ (void) sThread_Log::save ($key, $recv)
+	/**
+	 * 로그를 파일에 저장
+	 *
+	 * @access public
+	 * @return void
+	 * @param  int    세션 키
+	 * @param  string 로그 내용
+	 */
 	function save ($key, $recv) {
 		$res = &Vari::$res->status[$key];
 
@@ -60,5 +98,6 @@ Class sThread_Log {
 			file_put_contents ($logfile, $err, FILE_APPEND);
 		}
 	}
+	// }}}
 }
 ?>
