@@ -10,6 +10,7 @@
  * @license     BSD License
  * @version     $Id$
  * @link        http://pear.oops.org/package/sThread
+ * @filesource
  */
 
 /**

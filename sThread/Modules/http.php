@@ -62,9 +62,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2012 OOPS.ORG
  * @license     BSD License
- * @version     $Id$
  * @link        http://pear.oops.org/package/sThread
- * @filesource
  */
 Class sThread_HTTP {
 	// {{{ Base properties

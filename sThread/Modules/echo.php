@@ -1,7 +1,11 @@
 <?php
 /**
- * sThread ECHO module<br>
- * Don't support utp protocol
+ * sThread ECHO module
+ *
+ * 에코 프로코톨을 검사.
+ *
+ * UDP protocol에 대한 검사는 정확성을 보장하지 못한다.
+ *
  *
  * @category    Network
  * @package     sThread
@@ -12,6 +16,22 @@
  * @version     $Id$
  * @link        http://pear.oops.org/package/sThread
  * @filesource
+ */
+
+/**
+ * ECHO module Class
+ *
+ * 에코 프로코톨을 검사.
+ *
+ * UDP protocol에 대한 검사는 정확성을 보장하지 못한다.
+ *
+ * @category    Network
+ * @package     sThread
+ * @subpackage  sThread_Module
+ * @author      JoungKyun.Kim <http://oops.org>
+ * @copyright   1997-2012 OOPS.ORG
+ * @license     BSD License
+ * @link        http://pear.oops.org/package/sThread
  */
 Class sThread_ECHO {
 	// {{{ Base properteis
