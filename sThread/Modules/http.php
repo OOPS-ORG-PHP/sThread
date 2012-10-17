@@ -371,19 +371,14 @@ Class sThread_HTTP {
 				 self::$sess->header[$key]->Transfer_Encoding == "chunked" ) {
 				self::$sess->chunked[$key] = true;
 				self::$sess->length[$key] = 0;
-				self::chunked_data ($key, $data);
 			} else {
 				self::$sess->length[$key] = (integer) self::$sess->header[$key]->Content_Length;
-				self::$sess->data[$key] = $data;
 			}
+			self::$sess->data[$key] = $data;
 		}
 
-		if ( isset (self::$sess->data[$key]) && $headerSet !== true ) {
-			if ( self::$sess->chunked[$key] === true )
-				self::chunked_data ($key, $recv);
-			else
-				self::$sess->data[$key] .= $recv;
-		}
+		if ( isset (self::$sess->data[$key]) && $headerSet !== true )
+			self::$sess->data[$key] .= $recv;
 
 		/*
 		 * Procotol complete case
@@ -391,7 +386,9 @@ Class sThread_HTTP {
 		$exit = false;
 		// case chunnked encoding
 		if ( self::$sess->chunked[$key] === true ) {
-			if ( preg_match ("/\r\n+0(\r\n)+$/", $recv) ) {
+			if ( preg_match ("/(^0(\r\n)+|\r\n+0(\r\n)+)$/", $recv) ) {
+				//file_put_contents ('./a', self::$sess->data[$key]);
+				self::chunked_data ($key);
 				/*
 				echo "!!!!!!!!!!!!!!!!!!!!!-----------------\n";
 				echo self::$sess->data[$key] . "\n";
@@ -399,14 +396,15 @@ Class sThread_HTTP {
 				echo "2. " . self::$sess->length[$key] . "\n";
 				echo "!!!!!!!!!!!!!!!!!!!!!-----------------\n";
 				file_put_contents ('./b', self::$sess->data[$key]);
+				file_put_contents ('./c', rtrim ($sess->recv[$key]));
 				 */
 				$datalen = strlen (self::$sess->data[$key]);
-				$sesslen = self::$sess->length[$key];
-				if ( $datalen != $sesslen ) {
+				$chunklen = self::$sess->length[$key];
+				if ( $datalen != $chunklen ) {
 					Vari::$res->status[$key] = array (
 						"{$host}:{$port}",
 						false,
-						"Protocol error: Contents Length different (D: $datalen <-> S:$sesslen)"
+						"Protocol error: Contents Length different (D: $datalen <-> C: $chunklen)"
 					);
 					return null;
 				}
@@ -448,29 +446,24 @@ Class sThread_HTTP {
 	}
 	// }}}
 
-	// {{{ private (void) sThread_HTTP::chunked_data ($key, $v)
-	private function chunked_data ($key, $v) {
-		if ( preg_match ("/^([0-9a-z][0-9a-z ]{0,3})\r\n(.*)$/s", $v, $matches) ) {
-			self::$sess->length[$key] += self::chunked_length ($matches[1]);
-			$v = $matches[2];
+	// {{{ private sThread_HTTP::chunked_data ($key)
+	private function chunked_data ($key) {
+		$p = self::$sess->data[$key];
+		$hexlen = 0;
+		while ( $p && $hexv != "0" ) {
+			$hexlen = ! $hexlen ? 6 : 8;
+			$hexv = preg_replace ('/[\s]+.*/', '', trim (substr ($p, 0, $hexlen)));
+			# hex 문자열이 4보다 작을 경우, 한문자가 땡겨지므로 처리해 줘야 한다.
+			if ( strlen ($hexv) < 4 )
+				$hexlen -= 4 - strlen ($hexv);
+
+			$chunklen = self::chunked_length ($hexv);
+			$buf .= substr ($p, $hexlen, $chunklen);
+			$p = substr ($p, $hexlen + $chunklen);
+			self::$sess->length[$key] += $chunklen;
 		}
 
-		while ( ($pos = strpos ($v, "\r\n")) !== false ) {
-			$chunkeds = substr ($v, $pos + 2, 6);
-			if ( preg_match ("/^([0-9a-z][0-9a-z ]{0,3})\r\n/", $chunkeds, $matches) ) {
-				self::$sess->length[$key] += self::chunked_length ($matches[1]);
-				self::$sess->data[$key] .= substr ($v, 0, $pos);
-				$v = substr ($v, $pos + strlen ($matches[1]) + 4);
-				continue;
-			}
-
-			self::$sess->data[$key] .= substr ($v, 0, $pos + 2);
-			$v = substr ($v, $pos + 2);
-		}
-
-		//self::$sess->data[$key] = preg_replace ("/([^\r]\n)\r\n$/", '\\1', self::$sess->data[$key]);
-		self::$sess->data[$key] = preg_replace ("/\r\n$/", '', self::$sess->data[$key]);
-		self::$sess->data[$key] .= $v;
+		self::$sess->data[$key] = $buf;
 	}
 	// }}}
 }
