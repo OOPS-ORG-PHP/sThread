@@ -42,9 +42,9 @@
  * HTTP 모듈에 사용할 수 있는 모듈 option은 다음과 같다.
  *
  * <ul>
- *     <ol>uri:</ol>   URI
- *     <ol>host:</ol>  HTTP/1.1 Host header 값
- *     <ol>agent:</ol> User Agent 값
+ *     <li><b>uri:</b>   URI</li>
+ *     <li><b>host:</b>  HTTP/1.1 Host header 값</li>
+ *     <li><b>agent:</b> User Agent 값</li>
  * </ul>
  *
  * 예제:
