@@ -20,8 +20,8 @@
  * DNS 모듈에 사용할 수 있는 모듈 option은 다음과 같다.
  *
  * <ul>
- *     <ol>query:</ol> 질의할 도메인 또는 IP주소
- *     <ol>record:</ol> 질의할 record type
+ *     <li><b>query:</b> 질의할 도메인 또는 IP주소</li>
+ *     <li><b>record:</b> 질의할 record type</li>
  * </ul>
  *
  * 예제:

@@ -22,8 +22,8 @@
  * FTP 모듈에 사용할 수 있는 모듈 option은 다음과 같다.
  *
  * <ul>
- *     <ol>user:</ol> 로그인 유저
- *     <ol>pass:</ol> 로그인 암호
+ *     <li><b>user:</b> 로그인 유저</li>
+ *     <li><b>pass:</b> 로그인 암호</li>
  * </ul>
  *
  * 예제:

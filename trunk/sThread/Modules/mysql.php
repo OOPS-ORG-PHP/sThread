@@ -20,10 +20,10 @@
  * MYSQL 모듈에 사용할 수 있는 모듈 option은 다음과 같다.
  *
  * <ul>
- *     <ol>user:</ol>     로그인 유저
- *     <ol>pass:</ol>     로그인 암호
- *     <ol>database:</ol> 질의할 데이터베이스 이름
- *     <ol>query:</ol>    쿼리 문자열
+ *     <li><b>user:</b>     로그인 유저</li>
+ *     <li><b>pass:</b>     로그인 암호</li>
+ *     <li><b>database:</b> 질의할 데이터베이스 이름</li>
+ *     <li><b>query:</b>    쿼리 문자열</li>
  * </ul>
  *
  * 예제:
