@@ -3,6 +3,15 @@
  * Project: sThread :: Single Thread Monitoring Agent API<br>
  * File: sThread.php
  *
+ * sThread package는 async 방식의 L7 layer 모니터링 에이전트
+ * 이다.
+ *
+ * sThread package는 libevent를 이용하여 Multi session과
+ * 동시에 여러가지 protocol을 처리할 수 있도록 설계가 있다.
+ *
+ * 모듈 구조를 지원하므로, 필요한 모듈을 직접 만들어 추가할 수
+ * 있다.
+ *
  * @category    Network
  * @package     sThread
  * @author      JoungKyun.Kim <http://oops.org>
@@ -39,7 +48,9 @@ require_once 'sThread/Log.php';
 
 // {{{ libevent call functions
 /**
- * libevent에서 사용되는 read callback 함수
+ * libevent에서 사용되는 read callback wrapper 함수
+ *
+ * 실제로 frontend에서는 사용할 일이 없다.
  *
  * @return bool
  * @param  resource libevent resource
@@ -50,7 +61,9 @@ function sThread_readCallback ($buf, $arg) {
 }
 
 /**
- * libevent에서 사용되는 write callback 함수
+ * libevent에서 사용되는 write callback wrapper 함수
+ *
+ * 실제로 frontend에서는 사용할 일이 없다.
  *
  * @return bool
  * @param  resource libevent resource
@@ -61,7 +74,7 @@ function sThread_writeCallback ($buf, $arg) {
 }
 
 /**
- * libevent에서 사용되는 예외 callback 함수
+ * libevent에서 사용되는 예외 callback wrapper 함수
  *
  * 이 함수는 아무런 작동을 하지 않는다.
  *
@@ -74,6 +87,15 @@ function sThread_exceptionCallback ($buf, $arg) { }
 
 /**
  * sThread 패키지의 메인 Class
+ *
+ * sThread package는 async 방식의 L7 layer 모니터링 에이전트
+ * 이다.
+ *
+ * sThread package는 libevent를 이용하여 Multi session과
+ * 동시에 여러가지 protocol을 처리할 수 있도록 설계가 있다.
+ *
+ * 모듈 구조를 지원하므로, 필요한 모듈을 직접 만들어 추가할 수
+ * 있다.
  *
  * @category    Network
  * @package     sThread
@@ -368,7 +390,7 @@ Class sThread {
 		ePrint::dPrintf (Vari::DEBUG2, "[%-15s] %s:%d Recieve %s call\n",
 					$sess->sock[$key], $host, $port, $handler);
 
-		while ( strlen ($_buf = event_buffer_read ($buf, 4096)) > 0 )
+		while ( strlen ($_buf = event_buffer_read ($buf, 8192)) > 0 )
 			$buffer .= $_buf;
 
 		ePrint::dPrintf (Vari::DEBUG3, "[%-15s] %s:%d Recieved data\n",
