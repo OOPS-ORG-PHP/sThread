@@ -44,6 +44,6 @@ $host = array (
 	'test111.domain.com:80,http|uri=>/index.jsp', /* use http module with httpd option */
 );
 
-$s->excute ($host, 1);
+$s->execute ($host, 1);
 print_r (Vari::$res);
 ?>
