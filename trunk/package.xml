@@ -11,10 +11,10 @@
 		<email>joungkyun@gmail.com</email>
 		<active>yes</active>
 	</lead>
-	<date>2012-10-14</date>
-	<time>05:32:35</time>
+	<date>2012-10-17</date>
+	<time>17:48:39</time>
 	<version>
-		<release>1.0.0</release>
+		<release>1.0.1</release>
 		<api>1.0.0</api>
 	</version>
 	<stability>
@@ -22,7 +22,7 @@
 		<api>stable</api>
 	</stability>
 	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
-	<notes>* regist
+	<notes>* fixed worng access to empty property when clear session
 </notes>
 	<contents>
 		<dir name="/">
@@ -37,7 +37,7 @@
 			<file role="php" md5sum="b5a00dceafdb4a3862b340e424e12679" name="sThread/Log.php" />
 			<file role="php" md5sum="7929c3a4706238763c98cd0617cd678c" name="sThread/Module.php" />
 			<file role="php" md5sum="09821888bb405039e775d03c8cb02741" name="sThread/Vari.php" />
-			<file role="php" md5sum="4f37971462695c723fb8326474452ccc" name="sThread.php" />
+			<file role="php" md5sum="193ae9243c26518f28c9e56f9ccb7671" name="sThread.php" />
 		</dir>
 	</contents>
 	<dependencies>
@@ -62,6 +62,20 @@
 	</dependencies>
 	<phprelease />
 	<changelog>
+		<release>
+			<version>
+				<release>1.0.1</release>
+				<api>1.0.0</api>
+			</version>
+			<stability>
+				<release>stable</release>
+				<api>stable</api>
+			</stability>
+			<date>2012-10-17</date>
+			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+			<notes>* fixed worng access to empty property when clear session
+</notes>
+		</release>
 		<release>
 			<version>
 				<release>1.0.0</release>

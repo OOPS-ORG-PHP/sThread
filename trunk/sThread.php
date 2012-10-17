@@ -408,7 +408,8 @@ Class sThread {
 			}
 		}
 
-		self::$mod->$type->init();
+		if ( ! empty (self::$mod->$type) )
+			self::$mod->$type->init();
 	}
 
 	function socketClose ($key) {
