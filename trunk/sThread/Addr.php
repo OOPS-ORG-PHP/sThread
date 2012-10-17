@@ -28,7 +28,6 @@ require_once 'ePrint.php';
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2012 OOPS.ORG
  * @license     BSD License
- * @version     $Id$
  * @link        http://pear.oops.org/package/sThread
  */
 Class sThread_Address {

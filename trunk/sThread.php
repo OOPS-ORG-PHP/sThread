@@ -80,9 +80,7 @@ function sThread_exceptionCallback ($buf, $arg) { }
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2012 OOPS.ORG
  * @license     BSD License
- * @version     $Id$
  * @link        http://pear.oops.org/package/sThread
- * @since       File available since relase 1.0.0
  */
 Class sThread {
 	// {{{ properties

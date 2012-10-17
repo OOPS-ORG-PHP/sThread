@@ -17,17 +17,13 @@
 /**
  * sThread package의 모듈을 관리하는 Class
  *
- * File: sThread/Module.php
- *
  * @category    Network
  * @package     sThread
  * @subpackage  sThread_CORE
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2012 OOPS.ORG
  * @license     BSD License
- * @version     $Id$
  * @link        http://pear.oops.org/package/sThread
- * @filesource
  */
 Class sThread_Module {
 	// {{{ properties

@@ -37,10 +37,8 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   1997-2012 OOPS.ORG
  * @license     BSD License
- * @version     $Id$
  * @link        http://pear.oops.org/package/sThread
  * @see         http://forge.mysql.com/wiki/MySQL_Internals_ClientServer_Protocol MySQL Internals ClientServer Protocol
- * @filesource
  */
 Class sThread_MYSQL {
 	// {{{ Base properteis
