@@ -1,7 +1,22 @@
 <?php
 /**
- *
  * Single Thread Monitoring Module API<br>
+ * File: sThread/Module.php
+ *
+ * @category    Network
+ * @package     sThread
+ * @subpackage  sThread_CORE
+ * @author      JoungKyun.Kim <http://oops.org>
+ * @copyright   1997-2012 OOPS.ORG
+ * @license     BSD License
+ * @version     $Id$
+ * @link        http://pear.oops.org/package/sThread
+ * @filesource
+ */
+
+/**
+ * sThread package의 모듈을 관리하는 Class
+ *
  * File: sThread/Module.php
  *
  * @category    Network
@@ -30,10 +45,21 @@ Class sThread_Module {
 	}
 	// }}}
 
-	// {{{ (void) MODULE::init (void)
-	/*
-	 * ./module 디렉토리에 있는 모듈들을 읽어서 $obj에 등록.
-	 * $port에는 module을 키로 하여 모듈 포트를 저장.
+	// {{{ (void) sThread_Module::init (void)
+	/**
+	 * sThread의 모듈을 등록한다.
+	 *
+	 * get_ini('include_path') 의 경로 하위의 sThread/Moudles
+	 * 디렉토리에 있는 모듈을 self::$obj 에 등록을 한다.
+	 *
+	 * STHREAD_MODULES라는 환경변수가 있을 경우 이 환경변수에
+	 * 지정된 디렉토리에 있는 모듈들도 같이 등록을 한다.
+	 *
+	 * self::$port에는 module 이름을 키로 하여 모듈 포트를
+	 * 저장한다.
+	 *
+	 * @access public
+	 * @return void
 	 */
 	function init () {
 		$mods_r = explode (':', ini_get ('include_path'));
@@ -75,9 +101,13 @@ Class sThread_Module {
 	}
 	// }}}
 
-	// {{{ (int) MODULE::port ($type)
-	/*
+	// {{{ (int) sThread_Moduel::port ($type)
+	/**
 	 * 모듈 이름으로 사용할 포트를 반환
+	 *
+	 * @access public
+	 * @return int
+	 * @param  string 모듈 이름
 	 */
 	function port ($type) {
 		if ( ! $type )
@@ -86,9 +116,13 @@ Class sThread_Module {
 	}
 	// }}}
 
-	// {{{ (string) MODULE::type ($port)
-	/*
+	// {{{ (string) sThread_Module::type ($port)
+	/**
 	 * 포트 번호를 입력 받아, 해당 포트에 대한 모듈 이름을 반환
+	 *
+	 * @access public
+	 * @return string
+	 * @param  int    포트 번호
 	 */
 	function type ($port) {
 		if ( ! $port )
@@ -102,6 +136,9 @@ Class sThread_Module {
 	// }}}
 }
 
+/**
+ * sThread_Module 을 구동
+ */
 sThread_Module::init ();
 $mod = &sThread_Module::$obj;
 ?>
