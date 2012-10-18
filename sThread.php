@@ -165,6 +165,11 @@ Class sThread {
 	 * @var int
 	 */
 	static public $logtype;
+	/**
+	 * 실행 결과 데이터 보존 여부
+	 * @var boolean
+	 */
+	static public $result = false;
 	/**#@-*/
 
 	/**#@+
@@ -196,6 +201,7 @@ Class sThread {
 		$this->mod     = &self::$mod;
 		$this->tmout   = &self::$tmout;
 		$this->async   = &self::$async;
+		$this->result  = &self::$result;
 
 		# sThread_LOG varibles
 		$this->logfile   = &sThread_Log::$fname;
@@ -221,7 +227,9 @@ Class sThread {
 			self::$mod = &sThread_Module::$obj;
 		}
 
-		self::$async = false;
+		self::$async  = false;
+		self::$result = false;
+		Vari::$result = &self::$result;
 
 		# sThread_LOG varibles
 		self::$logfile   = &sThread_Log::$fname;
@@ -346,6 +354,8 @@ Class sThread {
 		event_base_loop ($base);
 		self::clearEvent ();
 		event_base_free ($base);
+		// 필요 없는 정보 정리
+		Vari::clear (true);
 	}
 	// }}}
 

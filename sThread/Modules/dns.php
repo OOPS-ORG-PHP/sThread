@@ -26,7 +26,7 @@
  *
  * 예제:
  * <code>
- *   sThread::execute ('kns.kornet.net:53|query=>a.com,record=A', 2, 'udp');
+ *   sThread::execute ('kns.kornet.net:53|query=>a.com,record=>A', 2, 'udp');
  * </code>
  *
  * @category    Network
@@ -66,6 +66,7 @@ Class sThread_DNS {
 	// {{{ Per module properties
 	/**#@+
 	 * @access private
+	 * @see http://msdn.microsoft.com/en-us/library/windows/desktop/cc982162(v=vs.85).aspx
 	 */
 	const OP_QUERY  = 0x00;
 	const OP_IQUERY = 0x01;
@@ -78,6 +79,8 @@ Class sThread_DNS {
 	const QTYPE_PTR   = 12;
 	const QTYPE_HINFO = 13;
 	const QTYPE_MX    = 15;
+	const QTYPE_TXT   = 0x0010;
+	const QTYPE_AAAA  = 0x001c;
 
 	const QCLASS_IN   = 1;
 	const QCLASS_CH   = 3;
@@ -217,7 +220,8 @@ Class sThread_DNS {
 	 * @param  int    세션 키
 	 */
 	function clear_session ($key) {
-		self::$dns = array ();
+		// self::$dns 자체는 unset되지 않고, member들만 unset
+		Vari::objectUnset (self::$dns);
 		return;
 	}
 	// }}}
@@ -297,6 +301,15 @@ Class sThread_DNS {
 			case 'CNAME' :
 				$opt->record = self::QTYPE_CNAME;
 				break;
+			case 'SOA' :
+				$opt->record = self::QTYPE_SOA;
+				break;
+			case 'TXT' :
+				$opt->record = self::QTYPE_TXT;
+				break;
+			case 'AAAA' :
+				$opt->record = self::QTYPE_AAAA;
+				break;
 			default :
 				$err = sprintf ('[DNS] Invalid query type : "%s"', $opt->record);
 				Vari::$res->status[$key] = array (
@@ -348,8 +361,8 @@ Class sThread_DNS {
 		self::$dns[$key]->recv->data = $sess->recv[$key];
 		self::$dns[$key]->recv->length = $rlen;
 
-		$r = self::recv_header ($key, $sess->recv[$key]);
-		if ( $r === false ) {
+		//if ( ($r = self::recv_header ($key, $sess->recv[$key])) === false ) {
+		if ( ($r = self::recv_parse ($key, $sess->recv[$key])) === false ) {
 			Vari::$res->status[$key] = array (
 				"{$host}:{$port}",
 				false,
@@ -368,6 +381,12 @@ Class sThread_DNS {
 			$err = '[DNS] No return result';
 			Vari::$res->status[$key] = array ("{$host}:{$port}", false, $err);
 			return null;
+		}
+
+		// check
+		if ( Vari::$result === true ) {
+			unset (self::$dns[0]->recv->resource->data);
+			$sess->data[$key] = self::$dns[$key]->recv->resource;
 		}
 
 		$sess->recv[$key] = '';
@@ -443,6 +462,10 @@ Class sThread_DNS {
 				return 'HINFO';
 			case self::QTYPE_MX:
 				return 'MX';
+			case self::QTYPE_TXT:
+				return 'TXT';
+			case self::QTYPE_AAAA:
+				return 'AAAA';
 			default:
 				return sprintf ('Unknown: 0x%02x', $v);
 		}
@@ -693,6 +716,8 @@ Class sThread_DNS {
 		$ques->class = self::query_class (substr ($z, 2, 2));
 		$ques->length += 2;
 		$ques->data = substr ($v, 0, $ques->length);
+
+		return true;
 	} // }}}
 
 	// {{{ private (void) sThread_DNS::recv_rdata ($key, &$v)
@@ -710,6 +735,7 @@ Class sThread_DNS {
 				$v->mx = $mx[1];
 				$v->rdata = substr ($v->rdata, 2);
 				$vlen -= 2;
+			case 'NS' :
 			case 'PTR' :
 			case 'CNAME' :
 				$rdata = '';
@@ -774,19 +800,23 @@ Class sThread_DNS {
 					}
 				}
 
-				$soa_field = unpack ('N4', substr ($v->rdata, $i + 1));
+				if ( ($soa_field = @unpack ('N4', substr ($v->rdata, $i + 1))) ) {
+					foreach ( $soa_field as $vv )
+						$v->rdata .= ' ' . $vv;
+				}
 				$v->rdata = $rdata;
-				foreach ( $soa_field as $vv )
-					$v->rdata .= ' ' . $vv;
 
+				break;
+			case 'TXT' :
+				$v->rdata = substr ($v->rdata, 1);
 				break;
 		}
 	} // }}}
 
 	// {{{ private (void) sThread_DNS::recv_resource ($key, $v)
 	private function recv_resource ($key, $v) {
-		$header   = &self::$dns[$key]->header;
-		$question = &self::$dns[$key]->question;
+		$header   = &self::$dns[$key]->recv->header;
+		$question = &self::$dns[$key]->recv->question;
 
 		$start = $header->length + $question->length + 1;
 		self::$dns[$key]->recv->resource->data = substr ($v, $start);
@@ -834,6 +864,8 @@ Class sThread_DNS {
 			$buf = substr ($buf, $idx + 10 + $res->v[$i]->rdlen + 1);
 			$idx = 0;
 		}
+
+		return true;
 	} // }}}
 
 	// {{{ private (void) sThread_DNS::recv_parse ($v)
@@ -841,10 +873,15 @@ Class sThread_DNS {
 		self::$dns[$key]->recv->data = $v;
 		self::$dns[$key]->recv->length = strlen ($v);
 
-		self::recv_header ($key, $v);
-		self::recv_question ($key, $v);
-		self::recv_resource ($key, $v);
-		//print_r (self::$dns[$key]->recv);
+		$r = self::recv_header ($key, $v);
+
+		if ( $r !== false && Vari::$result === true ) {
+			self::recv_question ($key, $v);
+			self::recv_resource ($key, $v);
+			//print_r (self::$dns[$key]->recv);
+		}
+
+		return $r;
 	} // }}}
 }
 

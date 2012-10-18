@@ -12,7 +12,7 @@
 		<active>yes</active>
 	</lead>
 	<date>2012-10-19</date>
-	<time>01:50:37</time>
+	<time>05:24:31</time>
 	<version>
 		<release>1.0.1</release>
 		<api>1.0.0</api>
@@ -29,18 +29,18 @@
 </notes>
 	<contents>
 		<dir name="/">
-			<file role="php" md5sum="f4af26094d54b11b3b646adfbcbcc597" name="sThread/Modules/dns.php" />
+			<file role="php" md5sum="1c9a4a794dac53dec078da3ff8e3e786" name="sThread/Modules/dns.php" />
 			<file role="php" md5sum="529e4b5b902597da12c2352089c50a1b" name="sThread/Modules/echo.php" />
 			<file role="php" md5sum="7d1dd11cebec80dbbc99d56e8c6e14b3" name="sThread/Modules/ftp.php" />
-			<file role="php" md5sum="dba75430488c0290b3706b4e05509567" name="sThread/Modules/http.php" />
+			<file role="php" md5sum="5320fc4030cf32315e3363aa45eccbf7" name="sThread/Modules/http.php" />
 			<file role="php" md5sum="33a630e52704a81251c2d0e6fc55a2a4" name="sThread/Modules/memcached.php" />
-			<file role="php" md5sum="4a7acc1adb1d40bb8f8efa0c4c3a9791" name="sThread/Modules/mysql.php" />
+			<file role="php" md5sum="12c0ac01cd4890e01a31fcaa9e3dad4a" name="sThread/Modules/mysql.php" />
 			<file role="php" md5sum="be9f22598a342efae026ef453fb44a14" name="sThread/Modules/sock.php" />
 			<file role="php" md5sum="a1272c94330c0a10c0fc4e885f7befc7" name="sThread/Addr.php" />
 			<file role="php" md5sum="33ab84c8490d5c08e95ac1ff3c211f2d" name="sThread/Log.php" />
 			<file role="php" md5sum="c6aa027f6767cf62303ab57eb9985a5d" name="sThread/Module.php" />
-			<file role="php" md5sum="a1a7853cc2eb05f059929b4e8416e9a0" name="sThread/Vari.php" />
-			<file role="php" md5sum="a29b7cc9e91db2381e3f1bd3f5fcd39e" name="sThread.php" />
+			<file role="php" md5sum="8d2cb02ae982eae9868ef8068f6f490e" name="sThread/Vari.php" />
+			<file role="php" md5sum="2b7b7a51364432c85af22ac243e6adc6" name="sThread.php" />
 		</dir>
 	</contents>
 	<dependencies>
@@ -78,6 +78,8 @@
 			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
 			<notes>* fixed worng access to empty property when clear session
 * rewrite chunked data logic on http module
+* fixed wrong rdata parsing on dns module
+* add Vari::$result for return execute result
 * add phpDocument style comments
 </notes>
 		</release>

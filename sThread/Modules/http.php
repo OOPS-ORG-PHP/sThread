@@ -237,15 +237,14 @@ Class sThread_HTTP {
 	 * @param  int    세션 키
 	 */
 	function clear_session ($key) {
-		$target = array (
-			'returnCode', 'chunked', 'length', 'header', 'data',
-		);
-
-		foreach ( $target as $val ) {
-			$dest = &self::$sess->$val;
-			if ( isset ($dest[$key]) )
-				unset ($dest[$key]);
+		#Vari::objectUnset (self::$sess);
+		foreach ( self::$sess as $k => $val) {
+			Vari::objectUnset (self::$sess->$k);
 		}
+
+		$sess = Vari::$sess;
+		if ( ! empty ($sess->recv[$key]) )
+			$sess->recv[$key] = base64_encode ($sess->recv[$key]);
 	}
 	// }}}
 
@@ -416,8 +415,11 @@ Class sThread_HTTP {
 		}
 
 		if ( $exit === true ) {
+			if ( Vari::$result === true )
+				$sess->data[$key] = base64_encode (self::$sess->data[$key]);
+			unset ($sess->recv[$key]);
+
 			self::clear_session ($key);
-			$sess->recv[$key] = '';
 			return true;
 		}
 
