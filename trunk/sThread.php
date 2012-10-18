@@ -717,6 +717,14 @@ Class sThread {
 	}
 	// }}}
 
+	// {{{ private sThread::timeResult ($key)
+	/**
+	 * 수행 시간을 정리
+	 *
+	 * @access private
+	 * @return void
+	 * @param  int  세션 키
+	 */
 	private function timeResult ($key) {
 		$time = &Vari::$time;
 		$sess = &Vari::$sess;
@@ -732,5 +740,6 @@ Class sThread {
 		unset (Vari::$time->pstart[$key]);
 		unset (Vari::$time->pend[$key]);
 	}
+	// }}}
 }
 ?>
