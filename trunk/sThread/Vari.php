@@ -51,6 +51,12 @@ Class Vari {
 	 * @var    object
 	 */
 	static public $time;
+	/**
+	 * Action의 결과를 반환 받을 것인지 여부
+	 * @var    boolean
+	 *
+	 */
+	static public $result;
 	/**#@-*/
 
 	const DEBUG1 = 1;
@@ -66,23 +72,29 @@ Class Vari {
 	const EVENT_UNKNOWN     = false;
 	// }}}
 
-	// {{{ (void) Vari::clear (void)
-	function clear () {
-		$res = array ('total', 'success', 'failure', 'status');
-		$sess = array ('addr', 'opt', 'sock', 'status', 'event', 'recv', 'send', 'ctime', 'ptime');
-		$time = array ('cstart', 'cend', 'pstart', 'pend');
+	// {{{ (void) Vari::clear ($b = false)
+	/**
+	 * @access public
+	 * @return void
+	 * @param  bool   (optional) true로 설정하면 필요없는 member만
+	 *                정리한다. false의 경우, Vari Class의 모든
+	 *                멤버를 초기화 한다. 기본값 false
+	 */
+	function clear ($b = false) {
+		if ( $b === true ) {
+			$target = array ('sock', 'status', 'event', 'send', 'proto');
+			foreach ( $target as $mem ) {
+				self::objectUnset (self::$sess->$mem);
+				unset (self::$sess->$mem);
+			}
 
-		foreach ( $res as $key )
-			if ( isset (self::$res->$key) )
-				unset (self::$res->$key);
+			self::objectUnset (self::$time);
+			return;
+		}
 
-		foreach ( $sess as $key )
-			if ( isset (self::$sess->$key) )
-				unset (self::$sess->$key);
-
-		foreach ( $time as $key )
-			if ( isset (self::$time->$key) )
-				unset (self::$time->$key);
+		self::objectUnset (self::$res);
+		self::objectUnset (self::$sess);
+		self::objectUnset (self::$time);
 
 		Vari::$res = (object) array (
 			'total'   => 0,
@@ -109,6 +121,46 @@ Class Vari {
 			'pstart' => array (),
 			'pend'   => array ()
 		);
+	}
+	// }}}
+
+	// {{{ (void) Vari::objectUnset (&$r)
+	/**
+	 * 주어진 파라미터가 object 또는 array일 경우 소속
+	 * 멤버들을 unset 시킨다.
+	 *
+	 * 자기 자신을 unset 하지는 못하므로, 이 함수 호출 후에
+	 * 직접 unset을 해 줘야 한다.
+	 *
+	 * @access public
+	 * @return void
+	 * @param  mixed unset할 array 또는 object
+	 */
+	function objectUnset (&$r) {
+		switch (($type = gettype ($r))) {
+			case 'object' :
+			case 'array' :
+				foreach ( $r as $key => $val ) {
+					switch (($subtype = gettype ($val))) {
+						case 'array' :
+						case 'object' :
+							if ( $type == 'array' ) {
+								self::objectUnset ($r[$key]);
+								unset ($r[$key]);
+							} else {
+								self::objectUnset ($r->$key);
+								unset ($r->$key);
+							}
+							break;
+						default:
+							if ( $type == 'array' )
+								unset ($r[$key]);
+							else
+								unset ($r->$key);
+					}
+				}
+				break;
+		}
 	}
 	// }}}
 

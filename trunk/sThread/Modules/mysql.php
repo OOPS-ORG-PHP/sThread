@@ -258,13 +258,13 @@ Class sThread_MYSQL {
 	 * @param  int    세션 키
 	 */
 	function clear_session ($key) {
-		self::$server = array ();
-		self::$qstatus  = array ();
-		self::$columnno = array ();
-		self::$columnid = array ();
-		self::$rowid    = array ();
-		self::$column   = array ();
-		self::$r        = array ();
+		Vari::objectUnset (self::$server);
+		Vari::objectUnset (self::$qstatus);
+		Vari::objectUnset (self::$columnno);
+		Vari::objectUnset (self::$columnid);
+		Vari::objectUnset (self::$rowid);
+		Vari::objectUnset (self::$column);
+		Vari::objectUnset (self::$r);
 		return;
 	}
 	// }}}
