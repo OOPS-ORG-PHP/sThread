@@ -134,27 +134,23 @@ Class sThread {
 	 */
 	/**
 	 * sThread_Module 패키지에서 등록한 모듈 object
-	 *
 	 * @var object
 	 */
 	static public $mod;
 	/**
-	 * libevent 동작을 sync로 할지 async로 할지 여부
+	 * libevent 동작을 sync로 할지 async로 할지 여부.
 	 * 기본값 'false'
-	 *
 	 * @var boolean
 	 */
 	static public $async;
 	/**
 	 * 저장할 로그 파일 이름
-	 *
 	 * @var string
 	 */
 	static public $logfile;
 	/**
 	 * 저장할 로그 파일이름 postfix.
 	 * data function의 format으로 지정해야 한다.
-	 *
 	 * @var string
 	 */
 	static public $logformat;
@@ -171,13 +167,21 @@ Class sThread {
 	static public $logtype;
 	/**#@-*/
 
+	/**#@+
+	 * @access private
+	 */
 	/**
 	 * 소켓 연결/읽기/쓰기 타임아웃
-	 *
-	 * @access public
 	 * @var    int
 	 */
 	static private $tmout;
+
+	/**
+	 * socket create interval
+	 * @var    int
+	 */
+	static private $timer = 200;
+	/**#@-*/
 	// }}}
 
 	// {{{ (object) sThread::__construct (void)
@@ -210,22 +214,7 @@ Class sThread {
 	 *              class를 호출 하지 않는다. 기본값 false.
 	 */
 	function init ($mod_no_init = false) {
-		Vari::$res = (object) array (
-			'total'   => 0,
-			'success' => 0,
-			'failure' => 0,
-			'status'  => array ()
-		);
-
-		Vari::$sess = (object) array (
-			'addr'   => array (),
-			'opt'    => array (),
-			'sock'   => array (),
-			'status' => array (),
-			'event'  => array (),
-			'recv'   => array (), // recieve data buffer
-			'send'   => array (), // socket write complete flag. set 1, complete
-		);
+		Vari::clear ();
 
 		if ( $mod_no_init === false ) {
 			sThread_Module::init ();
@@ -281,6 +270,7 @@ Class sThread {
 
 		$sess = &Vari::$sess;
 		$res  = &Vari::$res;
+		$time = &Vari::$time;
 
 		$key = 0;
 		foreach ( $hosts as $line ) {
@@ -301,12 +291,13 @@ Class sThread {
 			self::explodeAddr ($host, $port, $type, $newline);
 			$addr = "{$protocol}://{$host}:{$port}";
 
+			$time->cstart[$key] = microtime ();
 			$async = (self::$async === true) ?
 					STREAM_CLIENT_CONNECT|STREAM_CLIENT_ASYNC_CONNECT : STREAM_CLIENT_CONNECT;
 			$sess->sock[$key] = @stream_socket_client (
 				$addr, $errno, $errstr, self::$tmout, $async
 			);
-			usleep (200);
+			usleep (self::$timer);
 
 			if ( self::$async !== true && ! is_resource ($sess->sock[$key]) ) {
 				if ( ePrint::$debugLevel >= Vari::DEBUG1 )
@@ -316,8 +307,10 @@ Class sThread {
 				self::$mod->$type->set_last_status ($sess, $key);
 				$res->status[$key] = array ("{$host}:{$port}", false, "Failed socket create: {$errstr}");
 				$key++;
+				self::timeResult ($key);
 				continue;
 			}
+			$time->cend[$key] = microtime ();
 
 			ePrint::dPrintf (Vari::DEBUG1, "[%-15s] %s:%d (%d) Socket create success\n",
 						$sess->sock[$key], $host, $port, $key);
@@ -334,6 +327,7 @@ Class sThread {
 			if ( ! is_resource ($val) )
 				continue;
 
+			$time->pstart[$key] = microtime ();
 			$sess->event[$key] = event_buffer_new (
 					$sess->sock[$key],
 					'sThread_readCallback',
@@ -718,7 +712,25 @@ Class sThread {
 
 		if ( is_resource ($sess->sock[$key]) )
 			fclose ($sess->sock[$key]);
+
+		self::timeResult ($key);
 	}
 	// }}}
+
+	private function timeResult ($key) {
+		$time = &Vari::$time;
+		$sess = &Vari::$sess;
+
+		if ( isset ($time->pstart[$key]) )
+			$time->pend[$key] = microtime ();
+
+		$sess->ctime[$key] = Vari::chkTime ($time->cstart[$key], $time->cend[$key]);
+		$sess->ptime[$key] = Vari::chkTime ($time->pstart[$key], $time->pend[$key]);
+
+		unset (Vari::$time->cstart[$key]);
+		unset (Vari::$time->cend[$key]);
+		unset (Vari::$time->pstart[$key]);
+		unset (Vari::$time->pend[$key]);
+	}
 }
 ?>
