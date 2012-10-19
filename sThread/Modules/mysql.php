@@ -331,6 +331,7 @@ Class sThread_MYSQL {
 				false,
 				"Protocol error: Invalid Banner Packet Number : {$server->packet_number}"
 			);
+			Vari::binaryDecode ($sess->recv[$key], true);
 			return null;
 		}
 
@@ -392,6 +393,7 @@ Class sThread_MYSQL {
 				false,
 				"Protocol error: Invalid Handshake Packet Number : {$packet_number}"
 			);
+			Vari::binaryDecode ($sess->recv[$key], true);
 			return null;
 		}
 
@@ -406,6 +408,7 @@ Class sThread_MYSQL {
 				"Protocol error: Authenication Error: {$r->errno} : {$r->message}"
 			);
 			fwrite ($sess->sock[$key], self::quit_packet (), 5);
+			Vari::binaryDecode ($sess->recv[$key], true);
 			return null;
 		}
 
@@ -460,6 +463,7 @@ Class sThread_MYSQL {
 					false,
 					"Protocol error: Invalid Query Result Packet Number : {$packet_number}"
 				);
+				Vari::binaryDecode ($sess->recv[$key], true);
 				return null;
 			}
 
@@ -476,6 +480,7 @@ Class sThread_MYSQL {
 						"Protocol error: : Invalid Query Result Type"
 					);
 					fwrite ($sess->sock[$key], self::quit_packet (), 5);
+					Vari::binaryDecode ($sess->recv[$key], true);
 					return null;
 				}
 				self::$columnno[$key] = self::length_coded_binary ($buf);
@@ -518,6 +523,7 @@ Class sThread_MYSQL {
 						"Protocol error: : Invalid EOF Type of Packet"
 					);
 					fwrite ($sess->sock[$key], self::quit_packet (), 5);
+					Vari::binaryDecode ($sess->recv[$key], true);
 					return null;
 				}
 
