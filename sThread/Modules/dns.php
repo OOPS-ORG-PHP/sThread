@@ -755,6 +755,26 @@ Class sThread_DNS {
 				$ip = unpack ('N', $v->rdata);
 				$v->rdata = long2ip ($ip[1]);
 				break;
+			case 'AAAA' :
+				if ( strlen ($v->rdata) != 16 ) {
+					$v->rdata = '::';
+					break;
+				}
+
+				# Machine byte의 영향을 받을 수 있다. unpack을 사용하는 것이
+				# 좋을까? 일단은 이해를 위해서 나둔다. (이건 Intel용)
+				//$ipv6 = unpack ('n8', $v->rdata);
+				for ( $i=0; $i<16; $i+=2 )
+					$ipv6[] = hexdec (bin2hex ($v->rdata[$i] . $v->rdata[$i+1]));
+
+				$rdata = vsprintf("%x:%x:%x:%x:%x:%x:%x:%x", $ipv6);
+
+				# IPv6 압축
+				$rdata = preg_replace ('/^0:0:/', '-:-:', $rdata);
+				# 압축은 1회만 허용된다.
+				$rdata = preg_replace ('/(0:){2,}/', '::', $rdata, 1);
+				$v->rdata = preg_replace ('/^-:-:/', '0:0:', $rdata);
+				break;
 			case 'MX' :
 				$mx = unpack ('n', $v->rdata[0] . $v->rdata[1]);
 				$v->mx = $mx[1];
