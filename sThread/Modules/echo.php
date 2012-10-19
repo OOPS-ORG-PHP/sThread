@@ -263,7 +263,10 @@ Class sThread_ECHO {
 		if ( $sess->recv[$key] != "echo data\r\n" )
 			return false;
 
-		$sess->recv[$key] = '';
+		if ( Vari::$result === true )
+			$sess->data[$key] = base64_encode (self::$sess->data[$key]);
+		unset ($sess->recv[$key]);
+
 		return true;
 	}
 	// }}}
