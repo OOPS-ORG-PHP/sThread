@@ -79,12 +79,21 @@ Class sThread_DNS {
 	const QTYPE_PTR   = 12;
 	const QTYPE_HINFO = 13;
 	const QTYPE_MX    = 15;
-	const QTYPE_TXT   = 0x0010;
-	const QTYPE_AAAA  = 0x001c;
+	const QTYPE_TXT   = 16;
+	const QTYPE_SIG   = 24;
+	const QTYPE_KEY   = 25;
+	const QTYPE_AAAA  = 28;
+	const QTYPE_SPF   = 99;
+	const QTYPE_TSIG  = 250;
+	const QTYPE_IXFR  = 251;
+	const QTYPE_AXFR  = 252;
+	const QTYPE_ANY   = 255;
 
 	const QCLASS_IN   = 1;
 	const QCLASS_CH   = 3;
 	const QCLASS_HS   = 4;
+	const QCLASS_NONE = 254;
+	const QCLASS_ANY  = 255;
 
 	static private $header_member = array ('id', 'flags', 'noq', 'noans', 'noauth', 'noadd');
 	static private $dns;
