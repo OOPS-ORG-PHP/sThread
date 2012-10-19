@@ -24,6 +24,7 @@
  *     <li><b>pass:</b>     로그인 암호</li>
  *     <li><b>database:</b> 질의할 데이터베이스 이름</li>
  *     <li><b>query:</b>    쿼리 문자열</li>
+ *     <li><b>charset:</b>  클라이언트 문자셋</li>
  * </ul>
  *
  * 예제:
@@ -360,6 +361,8 @@ Class sThread_MYSQL {
 		self::$server[$key]->passwd   = $opt->pass;
 		self::$server[$key]->database = $opt->database;
 		self::$server[$key]->query    = $opt->query;
+		if ( isset ($opt->charset) )
+			self::$server[$key]->charset  = $opt->charset;
 
 		return self::send_authenication (self::$server[$key]);
 	} // }}}
@@ -539,6 +542,9 @@ Class sThread_MYSQL {
 				// ----------------------------------------------------------------
 				if ( self::parse_result ($r, $buf) == self::MYSQL_RET_EOF ) {
 					//print_r (self::$r);
+					unset ($sess->recv[$key]);
+					if ( Vari::$result === true )
+						Vari::objectCopy ($sess->data[$key], self::$r);
 					return true;
 				}
 				// ----------------------------------------------------------------
@@ -681,7 +687,7 @@ Class sThread_MYSQL {
 		$buffer = substr ($buffer, 13);
 		$buf = unpack ('Scapa/clang/Sstatus', $buffer);
 		$server->server_capabilities = $buf['capa'];
-		$server->server_language = ord($buf['lang']);
+		$server->charset = ord($buf['lang']);
 		$server->server_status = $buf['status'];
 
 		$buffer =  substr ($buffer, 18, 12);
@@ -697,8 +703,8 @@ Class sThread_MYSQL {
 		$s = pack ('c*', 0x8d, 0xa6, 0x03, 0x00);
 		# max_packaet_size
 		$s .= pack('c*', 0x00, 0x00, 0x00, 0x01);
-		# charset_number (use latin1, euckr -> 19 or 0x13)
-		$s .= pack ('c', $client->server_language);
+		# charset_number (use latin1 -> 51, euckr -> 19 or 0x13, utf8 -> 33)
+		$s .= pack ('c', $client->charset);
 		# padding
 		$s .= pack ('x23');
 		# user

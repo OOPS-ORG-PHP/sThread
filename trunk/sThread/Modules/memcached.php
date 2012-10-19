@@ -30,7 +30,19 @@
  * 
  * memcached에 stat 명령을 전송하여 결과값을 확인한다.
  *
- * stat명령의 결과에서 다음을 체크한다.
+ * Memcached 모듈에 사용할 수 있는 모듈 option은 다음과 같다.
+ *
+ * <ul>
+ *     <li><b>query:</b>    쿼리 문자열</li>
+ * </ul>
+ *
+ * 예제:
+ * <code>
+ *   sThread::execute ('domain.com:11211|query=>get foo', 2, 'tcp');
+ * </code>
+ *
+ * query를 따로 지정하지 않았을 경우에는 stat명령을 실행하고
+ * 그 결과에서 다음을 체크한다.
  *
  * <ol>
  *     <li>첫라인이 <i>STAT pid</i>로 시작하는지 확인</li>
@@ -69,7 +81,8 @@ Class sThread_MEMCACHED {
 
 	const MEMCACHED_REQUEST  = 1;
 	const MEMCACHED_RESPONSE = 2;
-	const MEMCACHED_CLOSE    = 3;
+	const MEMCACHED_QUIT     = 3;
+	const MEMCACHED_CLOSE    = 4;
 	/**#@-*/
 	// }}}
 
@@ -117,6 +130,9 @@ Class sThread_MEMCACHED {
 			case self::MEMCACHED_RESPONSE :
 				return Vari::EVENT_READY_RECV;
 				break;
+			case self::MEMCACHED_QUIT:
+				return Vari::EVENT_READY_SEND;
+				break;
 			case self::MEMCACHED_CLOSE :
 				return Vari::EVENT_READY_CLOSE;
 				break;
@@ -144,6 +160,9 @@ Class sThread_MEMCACHED {
 				break;
 			case self::MEMCACHED_RESPONSE :
 				$r = 'MEMCACHED_RESPONSE';
+				break;
+			case self::MEMCACHED_QUIT :
+				$r = 'MEMCACHED_QUIT';
 				break;
 			default:
 				$r = Vari::EVENT_UNKNOWN;
@@ -248,6 +267,11 @@ Class sThread_MEMCACHED {
 	 * @param  int    세션 키
 	 */
 	function memcached_request (&$sess, $key) {
+		$opt = $sess->opt[$key];
+
+		if ( $opt->query )
+			return $opt->query . "\r\n";
+
 		return "stats\r\n";
 	}
 	// }}}
@@ -275,13 +299,18 @@ Class sThread_MEMCACHED {
 		list ($host, $port, $type) = $sess->addr[$key];
 		$sess->recv[$key] .= $recv;
 
-		if ( strncmp ($sess->recv[$key], 'STAT pid ', 9) ) {
-			Vari::$res->status[$key] = array (
-				"{$host}:{$port}",
-				false,
-				'Protocol error: Invalid response'
-			);
-			return null;
+		$opt = $sess->opt[$key];
+		print_r ($opt);
+
+		if ( empty ($opt->query) || $opt->query == 'stat' ) {
+			if ( strncmp ($sess->recv[$key], 'STAT pid ', 9) ) {
+				Vari::$res->status[$key] = array (
+					"{$host}:{$port}",
+					false,
+					'Protocol error: Invalid response'
+				);
+				return null;
+			}
 		}
 
 		if ( ! preg_match ('/(END|ERROR)$/', trim ($sess->recv[$key])) )
@@ -296,9 +325,27 @@ Class sThread_MEMCACHED {
 			return null;
 		}
 
-		$sess->recv[$key] = '';
+		if ( Vari::$result === true )
+			$sess->data[$key] = $sess->recv[$key];
+
+		unset ($sess->recv[$key]);
 		return true;
 	}
+	// }}}
+
+	// {{{ (string) sThread_MEMCACHED::memcached_quit (&$sess, $key)
+	/**
+	 * 종료 쿼리 반환
+	 *
+	 * @access public
+	 * @return void
+	 * @param  object 세션 object
+	 * @param  int    세션 키
+	 */
+	function memcached_quit (&$sess, $key) {
+		return "quit\r\n";
+	}
+	// }}}
 }
 
 ?>
