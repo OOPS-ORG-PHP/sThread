@@ -378,18 +378,21 @@ Class sThread_DNS {
 				false,
 				self::$dns[$key]->err
 			);
+			Vari::binaryDecode ($sess->recv[$key], true);
 			return null;
 		}
 
 		if ( self::$dns[$key]->recv->header->flags->rcode != 'NOERROR' ) {
 			$err = sprintf ('[DNS] Return RCODE flag "%s"', self::$dns[$key]->recv->header->flags->rcode);
 			Vari::$res->status[$key] = array ("{$host}:{$port}", false, $err);
+			Vari::binaryDecode ($sess->recv[$key], true);
 			return null;
 		}
 
 		if ( self::$dns[$key]->recv->header->noans == 0 ) {
 			$err = '[DNS] No return result';
 			Vari::$res->status[$key] = array ("{$host}:{$port}", false, $err);
+			Vari::binaryDecode ($sess->recv[$key], true);
 			return null;
 		}
 
@@ -409,36 +412,6 @@ Class sThread_DNS {
 	 * User define functions
 	 * ********************************************************************************
 	 */
-
-	/*
-	 * Debugging API
-	 */
-	// {{{ private (void) sThread_DNS::print_query_packet ($packet)
-	private function print_query_packet ($packet, $return = false) {
-		for ( $i=0; $i<strlen ($packet); $i++ ) {
-			if ( ($i % 8) == 0 ) {
-				if ( ($i % 16) == 0 )
-					if ( $return )
-						$r .= "\n";
-					else
-						echo "\n";
-				else
-					if ( $return )
-						$r .= " ";
-					else
-						echo '  ';
-			}
-			if ( $return )
-				$r .= sprintf ("%02x ", ord ($packet[$i]));
-			else
-				printf ("%02x ", ord ($packet[$i]));
-		}
-
-		if ( $return )
-			return $r;
-
-		echo "\n";
-	} // }}}
 
 	/*
 	 * DNS packet header

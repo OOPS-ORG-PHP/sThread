@@ -253,6 +253,32 @@ Class Vari {
 	}
 	// }}}
 
+	// {{{ (string) Vari::binaryDecode ($bin, $ret = false)
+	/**
+	 * binary data를 hex data로 변환
+	 *
+	 * @access public
+	 * @return void|string
+	 * @param  string binary data
+	 * @param  boot   (optional) true로 설정하면 결과값을 반환한다.
+	 *                기본값을 false로 바로 출력을 한다.
+	 */
+	function binaryDecode (&$bin, $ret = false) {
+		$len = strlen ($bin);
+		for ( $i=0; $i<$len; $i++ ) {
+			if ( ($i % 8) == 0 )
+				$r .= ( ($i % 16) == 0 ) ? "\n" : ' ';
+
+			$r .= sprintf ("%02x ", ord ($bin[$i]));
+		}
+
+		if ( ! $ret )
+			echo $r . "\n";
+
+		$bin = $r;
+	}
+	// }}}
+
 	/*
 	 * Private methods.
 	 */
