@@ -792,24 +792,45 @@ Class sThread_DNS {
 				$v->rdata = $rdata;
 				break;
 			case 'SOA' :
+				// SOA structure
+				//  ----------------------------
+				// | MNAME  (length(1) + string |
+				//  ----------------------------
+				// | RNAME  (length(1) + string |
+				//  ----------------------------
+				// | SERIAL (long)              |
+				//  ----------------------------
+				// | REFRESH (long)             |
+				//  ----------------------------
+				// | RETRY   (long)             |
+				//  ----------------------------
+				// | EXPIRE  (long)             |
+				//  ----------------------------
+				// | MINIMUM (long)             |
+				//  ----------------------------
 				$rdata = '';
 				$soa_count = 0;
-				for ( $i=0; $i<$v->rdlen; $i++ ) {
+				for ( $i=0; $i<$vlen; $i++ ) {
 					$len = ord ($v->rdata[$i]);
 					if ( $len == 0 ) {
+						$rdata .= ' ';
+
 						if ( $soa_count++ == 1 )
 							break;
 
-						$rdata .= ' ';
 						continue;
 					}
 
+					// 0x0c가 나오면 다음 자리에 전체 데이터
+					// (self::$dns[$key]->recv->data)에서 몇번째인지의
+					// 정보가 있다.
 					if ( $len == 0xc0 ) {
 						$pos = ord ($v->rdata[$i+1]);
 						$rlen = ord ($buf[$pos]);
 
+						// 0이 나오면 종료이다.
 						while ( $rlen != 0 ) {
-							$rdata .= substr ($v->rdata, $pos + 1, $rlen) . '.';
+							$rdata .= substr ($buf, $pos + 1, $rlen) . '.';
 							$pos += $rlen + 1;
 							$rlen = ord ($buf[$pos]);
 
@@ -818,18 +839,24 @@ Class sThread_DNS {
 								$rlen = ord ($buf[$pos]);
 							}
 						}
-						$i += 2;
+
+						$rdata .= ' ';
+						$soa_count++;
+						$i++;
 					} else {
 						$rdata .= substr ($v->rdata, $i + 1, $len) . '.';
 						$i += $len;
 					}
+
+					if ( $soa_count == 2 )
+						break;
 				}
 
-				if ( ($soa_field = @unpack ('N4', substr ($v->rdata, $i + 1))) ) {
+				if ( ($soa_field = @unpack ('N5', substr ($v->rdata, $i + 1))) ) {
 					foreach ( $soa_field as $vv )
-						$v->rdata .= ' ' . $vv;
+						$rdata .= $vv . ' ';
 				}
-				$v->rdata = $rdata;
+				$v->rdata = rtrim ($rdata);
 
 				break;
 			case 'TXT' :
@@ -854,8 +881,10 @@ Class sThread_DNS {
 		$idn = 0; // value of position of resource
 		$pnt = 0; // position of question
 
-		$limit = $header->noans ? $header->noans : 1;
+		$limit = $limitchk = $header->noans ? $header->noans : 1;
 		for ( $i=0; $i<$limit; $i++ ) {
+			$vname = ($limit > $limitchk) ? 'ns' : 'v';
+
 			$idn = ord ($buf[$idx]);
 
 			if ( $idn == 0xc0 ) {
@@ -871,23 +900,27 @@ Class sThread_DNS {
 			while ( ($rr = self::length_coded_string ($qbuf)) != null ) {
 				if ( $rr === false )
 					return false;
-				$res->v[$i]->name .= $rr->data . '.';
-				$res->v[$i]->length += $rr->length;
+				$res->{$vname}[$i]->name .= $rr->data . '.';
+				$res->{$vname}[$i]->length += $rr->length;
 			}
 
 			if ( $idn != 0xc0 )
 				$idx += $res->v[$i]->length;
 
 			$rdata = unpack ('n2type/N1ttl/n1rdlen', substr ($buf, $idx + 1));
-			$res->v[$i]->type = self::query_type ($rdata['type1'], false);
-			$res->v[$i]->class = self::query_class ($rdata['type2'], false);
-			$res->v[$i]->ttl = $rdata['ttl'];
-			$res->v[$i]->rdlen = $rdata['rdlen'];
-			$res->v[$i]->rdata = substr ($buf, $idx + 10 + 1, $res->v[$i]->rdlen);
+			$res->{$vname}[$i]->type = self::query_type ($rdata['type1'], false);
+			$res->{$vname}[$i]->class = self::query_class ($rdata['type2'], false);
+			$res->{$vname}[$i]->ttl = $rdata['ttl'];
+			$res->{$vname}[$i]->rdlen = $rdata['rdlen'];
+			$res->{$vname}[$i]->rdata = substr ($buf, $idx + 10 + 1, $res->{$vname}[$i]->rdlen);
 
-			self::recv_rdata ($key, $res->v[$i]);
-			$buf = substr ($buf, $idx + 10 + $res->v[$i]->rdlen + 1);
+			self::recv_rdata ($key, $res->{$vname}[$i]);
+			$buf = substr ($buf, $idx + 10 + $res->{$vname}[$i]->rdlen + 1);
 			$idx = 0;
+
+			// 남은 것은 DNS 정보이다.
+			if ( ($i+1 == $limit) && $buf )
+				$limit++;
 		}
 
 		return true;
