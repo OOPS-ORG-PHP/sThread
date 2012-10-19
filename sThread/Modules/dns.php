@@ -71,6 +71,7 @@ Class sThread_DNS {
 	const OP_QUERY  = 0x00;
 	const OP_IQUERY = 0x01;
 	const OP_STATUS = 0x02;
+	const OP_UPDATE = 0x05
 
 	const QTYPE_A     = 1;
 	const QTYPE_NS    = 2;
@@ -626,6 +627,21 @@ Class sThread_DNS {
 				break;
 			case 5 :
 				return 'REFUSED';
+				break;
+			case 6 :
+				return 'YXDOMAIN';
+				break;
+			case 7 :
+				return 'YXRRSET';
+				break;
+			case 8 :
+				return 'NXRRSET';
+				break;
+			case 9 :
+				return 'NOTAUTH';
+				break;
+			case 10 :
+				return 'NOTZONE';
 				break;
 			default :
 				// reserved for future use
