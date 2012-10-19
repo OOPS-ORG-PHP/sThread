@@ -71,7 +71,7 @@ Class sThread_DNS {
 	const OP_QUERY  = 0x00;
 	const OP_IQUERY = 0x01;
 	const OP_STATUS = 0x02;
-	const OP_UPDATE = 0x05
+	const OP_UPDATE = 0x05;
 
 	const QTYPE_A     = 1;
 	const QTYPE_NS    = 2;
