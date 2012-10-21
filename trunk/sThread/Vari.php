@@ -254,6 +254,38 @@ Class Vari {
 	}
 	// }}}
 
+	// {{{ (string) Vari::timeCalc ($a)
+	/**
+	 * 배열로 주어진 시간의 합을 반환
+	 *
+	 * @access public
+	 * @return string
+	 * @param  array
+	 */
+	function timeCalc ($a) {
+		if ( ! is_array ($a) )
+			return '0 msec';
+
+		foreach ( $a as $t ) {
+			if ( preg_match ('/(.*)[\s]+msec/', $t, $matches) )
+				$time += $matches[1] * 1000;
+			else
+				$time += $matches[1] * 1000000;
+
+		}
+
+		if ( $time >= 1000000 ) {
+			$unit = 'sec';
+			$div = 1000000;
+		} else {
+			$unit = 'msec';
+			$div = 1000;
+		}
+
+		return sprintf ('%.3f %s', $time / $div, $unit);
+	}
+	// }}}
+
 	// {{{ (string) Vari::binaryDecode ($bin, $ret = false)
 	/**
 	 * binary data를 hex data로 변환
