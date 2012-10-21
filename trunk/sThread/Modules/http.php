@@ -45,6 +45,7 @@
  *     <li><b>uri:</b>   URI</li>
  *     <li><b>host:</b>  HTTP/1.1 Host header 값</li>
  *     <li><b>agent:</b> User Agent 값</li>
+ *     <li><b>referer:</b> Referer 값</li>
  * </ul>
  *
  * 예제:
@@ -297,10 +298,13 @@ Class sThread_HTTP {
 		$uri = isset ($opt->uri) ? $opt->uri : self::$uri;
 		$hostHeader = isset ($opt->host) ? $opt->host : $host;
 		$agent = isset ($opt->agent) ? $opt->agent : self::$agent;
+		if ( $opt->referer )
+			$referer = sprintf ("Referer: %s\r\n", $opt->referer);
 
 		return "GET {$uri} HTTP/1.1\r\n" .
 				"Host: {$hostHeader}\r\n" .
 				"Accpt: *.*\r\n" .
+				$referer .
 				"User-Agent: {$agent}\r\n" .
 				"Connection: close\r\n" .
 				"\r\n";
