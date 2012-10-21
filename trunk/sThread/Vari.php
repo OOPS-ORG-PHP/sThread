@@ -113,6 +113,7 @@ Class Vari {
 			'send'   => array (), // socket write complete flag. set 1, complete
 			'ctime'  => array (), // Connection time. It can't believe! :-(
 			'ptime'  => array (), // Processing time
+			'time'   => array ()  // Total time
 		);
 
 		Vari::$time = (object) array (
