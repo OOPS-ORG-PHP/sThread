@@ -416,8 +416,13 @@ Class sThread_HTTP {
 
 		if ( $exit === true ) {
 			if ( Vari::$result === true ) {
-				$sess->data[$key]->value = base64_encode (self::$sess->data[$key]);
-				$sess->data[$key]->length = self::$sess->length[$key];
+				$sess->data[$key] = (object) array (
+					'returnCode' => self::$sess->returnCode[$key],
+					'length'     => self::$sess->length[$key],
+					'value'      => base64_encode (self::$sess->data[$key]),
+					'header'     => null
+				);
+				Vari::objectCopy ($sess->data[$key]->header, self::$sess->header[$key]);
 			}
 			unset (Vari::$sess->recv[$key]);
 

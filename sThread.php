@@ -744,28 +744,7 @@ Class sThread {
 
 		$sess->ctime[$key] = Vari::chkTime ($time->cstart[$key], $time->cend[$key]);
 		$sess->ptime[$key] = Vari::chkTime ($time->pstart[$key], $time->pend[$key]);
-
-		// convert micro seconds
-		if ( preg_match ('/(.*)[\s]+msec/', $sess->ctime[$key], $matches) )
-			$ctime = $matches[1] * 1000;
-		else
-			$ctime = $matches[1] * 1000000;
-
-		if ( preg_match ('/(.*)[\s]+msec/', $sess->ptime[$key], $matches) )
-			$ptime = $matches[1] * 1000;
-		else
-			$ptime = $matches[1] * 1000000;
-
-		$time = $ctime + $ptime;
-		if ( $time >= 1000000 ) {
-			$unit = 'sec';
-			$div = 1000000;
-		} else {
-			$unit = 'msec';
-			$div = 1000;
-		}
-
-		$sess->time[$key] = sprintf ('%.3f msec', $time / $div, $unit);
+		$sess->time[$key]  = Vari::timeCalc (array ($sess->ctime[$key], $sess->ptime[$key]));
 
 		unset (Vari::$time->cstart[$key]);
 		unset (Vari::$time->cend[$key]);
