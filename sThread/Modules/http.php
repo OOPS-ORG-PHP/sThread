@@ -416,7 +416,7 @@ Class sThread_HTTP {
 
 		if ( $exit === true ) {
 			if ( Vari::$result === true ) {
-				$sess->data[$key]->v = base64_encode (self::$sess->data[$key]);
+				$sess->data[$key]->value = base64_encode (self::$sess->data[$key]);
 				$sess->data[$key]->length = self::$sess->length[$key];
 			}
 			unset (Vari::$sess->recv[$key]);
