@@ -415,9 +415,11 @@ Class sThread_HTTP {
 		}
 
 		if ( $exit === true ) {
-			if ( Vari::$result === true )
-				$sess->data[$key] = base64_encode (self::$sess->data[$key]);
-			unset ($sess->recv[$key]);
+			if ( Vari::$result === true ) {
+				$sess->data[$key]->v = base64_encode (self::$sess->data[$key]);
+				$sess->data[$key]->length = self::$sess->length[$key];
+			}
+			unset (Vari::$sess->recv[$key]);
 
 			self::clear_session ($key);
 			return true;
