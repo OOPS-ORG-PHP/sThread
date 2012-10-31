@@ -368,6 +368,7 @@ Class sThread_DNS {
 		if ( $rlen < 32 )
 			return false;
 
+		Vari::objectInit (self::$dns[$key]->recv);
 		self::$dns[$key]->recv->data = $sess->recv[$key];
 		self::$dns[$key]->recv->length = $rlen;
 
@@ -494,6 +495,7 @@ Class sThread_DNS {
 	 *         OP_STATUS     status query
 	 */
 	private function make_header ($key, &$buf) {
+		Vari::objectInit (self::$dns[$key]);
 		self::$dns[$key]->header_id = self::random_id (true);
 
 		$buf = self::$dns[$key]->header_id;      // Identification
@@ -555,6 +557,7 @@ Class sThread_DNS {
 		$buf .= pack ('n', $type);
 		$buf .= pack ('n', self::QCLASS_IN);
 
+		Vari::objectInit ($header);
 		$header->data = $buf;
 		$header->length  = strlen ($buf);
 
@@ -661,12 +664,14 @@ Class sThread_DNS {
 			return false;
 		}
 
+		Vari::objectInit (self::$dns[$key]->recv->header);
 		self::$dns[$key]->recv->header->data = substr ($v, 0, 12);
 		self::$dns[$key]->recv->header->length = 12;
 		$buf = unpack ('n*', self::$dns[$key]->recv->header->data);
 
 		for ( $i=0; $i<6; $i++ ) {
 			if ( self::$header_member[$i] == 'flags' ) {
+				Vari::objectInit (self::$dns[$key]->recv->header->{self::$header_member[$i]});
 				self::$dns[$key]->recv->header->{self::$header_member[$i]}->data = $buf[$i+1];
 				self::recv_header_flags ($key, $buf[$i+1]);
 			} else

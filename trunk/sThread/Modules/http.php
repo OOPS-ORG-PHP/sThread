@@ -448,6 +448,7 @@ Class sThread_HTTP {
 			if ( ! preg_match ('/([^:]+): (.+)/', $line, $matches) )
 				continue;
 			$matches[1] = str_replace ('-', '_', $matches[1]);
+			Vari::objectInit (self::$sess->header[$key])
 			self::$sess->header[$key]->{$matches[1]} = $matches[2];
 		}
 	}

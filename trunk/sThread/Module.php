@@ -35,9 +35,9 @@ Class sThread_Module {
 	// {{{ (void) __construct (void)
 	function __construct () {
 		self::init ();
-		$this->obj = &self::$obj;
-		$this->port = &self::$port;
-		$this->moddir = &self::$moddir;
+		#$this->obj = &self::$obj;
+		#$this->port = &self::$port;
+		#$this->moddir = &self::$moddir;
 	}
 	// }}}
 
@@ -91,6 +91,8 @@ Class sThread_Module {
 				);
 				continue;
 			}
+			if ( ! is_object (self::$obj) )
+				self::$obj = new stdClass;
 			self::$obj->$mod = new $class;
 			self::$port[$mod] = self::$obj->$mod->port;
 		}
