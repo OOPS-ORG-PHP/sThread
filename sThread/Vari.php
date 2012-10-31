@@ -312,6 +312,21 @@ Class Vari {
 	}
 	// }}}
 
+	// {{{ (string) Vari::objectInit (&$obj)
+	/**
+	 * 주어진 변수가 empty이거나 object가 아닐경우
+	 * standard object로 선언한다.
+	 *
+	 * @access public
+	 * @return void
+	 * @param  mixed
+	 */
+	function objectInit (&$obj) {
+		if ( empty ($obj) || is_object ($obj) )
+			$obj = new stdClass;
+	}
+	// }}}
+
 	/*
 	 * Private methods.
 	 */
