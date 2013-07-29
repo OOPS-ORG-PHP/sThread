@@ -33,22 +33,22 @@ Class Vari {
 	 */
 	/**
 	 * 세션 관련 정보 저장
-	 * @var    object
+	 * @var    stdClass
 	 */
 	static public $sess;
 	/**
 	 * 옵션값 저장
-	 * @var    object
+	 * @var    stdClass
 	 */
 	static public $opt;
 	/**
 	 * 처리 결과값을 저장
-	 * @var    object
+	 * @var    stdClass
 	 */
 	static public $res;
 	/**
 	 * 처리 시간 정보
-	 * @var    object
+	 * @var    stdClass
 	 */
 	static public $time;
 	/**

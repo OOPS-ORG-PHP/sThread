@@ -118,7 +118,7 @@ Class sThread_Address {
 	 * sThread로 주어진 주소값에서 옵션을 분리
 	 *
 	 * @access public
-	 * @return object
+	 * @return stdClass
 	 * @param  string
 	 */
 	function extraOption (&$type) {
@@ -128,7 +128,7 @@ Class sThread_Address {
 		$type = $matches[1];
 		$buf = explode (',', $matches[2]);
 
-		$r = (object) array ();
+		$r = new stdClass;
 		foreach ( $buf as $val ) {
 			if ( ! preg_match ('/^(.+)=>(.+)/', $val, $matches) )
 				continue;

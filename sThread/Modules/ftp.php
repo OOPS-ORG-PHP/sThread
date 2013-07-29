@@ -77,7 +77,7 @@ Class sThread_FTP {
 	/**
 	 * Class OOP 형식 초기화 메소드
 	 * @access public
-	 * @return object
+	 * @return sThread_FTP
 	 */
 	function __construct () {
 		self::init ();
@@ -185,10 +185,10 @@ Class sThread_FTP {
 	 * 세션의 상태를 단계로 변경한다.
 	 *
 	 * @access public
-	 * @param  boolean 변경한 상태가 마지막 단계일 경우 false를
-	 *                 반환한다.
-	 * @param  object  sThread 세션 변수 reference
-	 * @param  int     세션 키
+	 * @param  boolean  변경한 상태가 마지막 단계일 경우 false를
+	 *                  반환한다.
+	 * @param  stdClass sThread 세션 변수 reference
+	 * @param  int      세션 키
 	 */
 	function change_status (&$sess, $key) {
 		++$sess->status[$key];
@@ -205,8 +205,8 @@ Class sThread_FTP {
 	 * 세션의 상태를 마지막 단계로 변경한다.
 	 *
 	 * @access public
-	 * @param  object sThread 세션 변수 reference
-	 * @param  int    세션 키
+	 * @param  stdClass sThread 세션 변수 reference
+	 * @param  int      세션 키
 	 */
 	function set_last_status (&$sess, $key) {
 		$sess->status[$key] = self::FTP_CLOSE;
@@ -268,8 +268,8 @@ Class sThread_FTP {
 	 *
 	 * @access public
 	 * @return bool|null
-	 * @param  object 세션 object
-	 * @param  int    세션 키
+	 * @param  stdClass 세션 object
+	 * @param  int      세션 키
 	 * @param  mixed  read callback에서 전송받은 누적 데이터
 	 */
 	function ftp_banner (&$sess, $key, $recv) {
@@ -292,8 +292,8 @@ Class sThread_FTP {
 	 *
 	 * @access public
 	 * @return void
-	 * @param  object 세션 object
-	 * @param  int    세션 키
+	 * @param  stdCLass 세션 object
+	 * @param  int      세션 키
 	 */
 	function ftp_senduser (&$sess, $key) {
 		list ($host, $port, $type) = $sess->addr[$key];
@@ -317,8 +317,8 @@ Class sThread_FTP {
 	 *
 	 * @access public
 	 * @return bool|null
-	 * @param  object 세션 object
-	 * @param  int    세션 키
+	 * @param  stdClass 세션 object
+	 * @param  int      세션 키
 	 * @param  mixed  read callback에서 전송받은 누적 데이터
 	 */
 	function ftp_userbanner (&$sess, $key, $recv) {
@@ -351,8 +351,8 @@ Class sThread_FTP {
 	 *
 	 * @access public
 	 * @return void
-	 * @param  object 세션 object
-	 * @param  int    세션 키
+	 * @param  stdClass 세션 object
+	 * @param  int      세션 키
 	 */
 	function ftp_sendpass (&$ses, $key) {
 		return 'Pass ' . $ses->opt[$key]->pass . "\r\n";
@@ -364,8 +364,8 @@ Class sThread_FTP {
 	 *
 	 * @access public
 	 * @return bool|null
-	 * @param  object 세션 object
-	 * @param  int    세션 키
+	 * @param  stdClass 세션 object
+	 * @param  int      세션 키
 	 * @param  mixed  read callback에서 전송받은 누적 데이터
 	 */
 	function ftp_comfirmauth (&$sess, $key, $recv) {
@@ -399,8 +399,8 @@ Class sThread_FTP {
 	 *
 	 * @access public
 	 * @return void
-	 * @param  object 세션 object
-	 * @param  int    세션 키
+	 * @param  stdClass 세션 object
+	 * @param  int      세션 키
 	 */
 	function ftp_quit (&$sess, $key) {
 		return "quit\r\n";
