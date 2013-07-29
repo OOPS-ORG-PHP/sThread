@@ -105,7 +105,7 @@ Class sThread_HTTP {
 	/**
 	 * Class OOP 형식 초기화 메소드
 	 * @access public
-	 * @return object
+	 * @return sThread_HTTP
 	 */
 	function __construct () {
 		self::init ();
@@ -198,10 +198,10 @@ Class sThread_HTTP {
 	 * 세션의 상태를 단계로 변경한다.
 	 *
 	 * @access public
-	 * @param  boolean 변경한 상태가 마지막 단계일 경우 false를
-	 *                 반환한다.
-	 * @param  object  sThread 세션 변수 reference
-	 * @param  int     세션 키
+	 * @param  boolean  변경한 상태가 마지막 단계일 경우 false를
+	 *                  반환한다.
+	 * @param  stdClass sThread 세션 변수 reference
+	 * @param  int      세션 키
 	 */
 	function change_status (&$sess, $key) {
 		++$sess->status[$key];
@@ -218,8 +218,8 @@ Class sThread_HTTP {
 	 * 세션의 상태를 마지막 단계로 변경한다.
 	 *
 	 * @access public
-	 * @param  object sThread 세션 변수 reference
-	 * @param  int    세션 키
+	 * @param  stdClass sThread 세션 변수 reference
+	 * @param  int      세션 키
 	 */
 	function set_last_status (&$sess, $key) {
 		$sess->status[$key] = self::HTTP_CLOSE;
@@ -288,8 +288,8 @@ Class sThread_HTTP {
 	 *
 	 * @access public
 	 * @return void
-	 * @param  object 세션 object
-	 * @param  int    세션 키
+	 * @param  stdClass 세션 object
+	 * @param  int      세션 키
 	 */
 	function http_request (&$sess, $key) {
 		list ($host, $port, $type) = $sess->addr[$key];
@@ -323,9 +323,9 @@ Class sThread_HTTP {
 	 *                    false를 받으면 status를 유지한다.</li>
 	 *         <li>null:  전송 중 에러 발생</li>
 	 *     </ul>
-	 * @param  object 세션 object
-	 * @param  int    세션 키
-	 * @param  mixed  read callback에서 전송받은 누적 데이터
+	 * @param  stdClass 세션 object
+	 * @param  int      세션 키
+	 * @param  mixed    read callback에서 전송받은 누적 데이터
 	 */
 	function http_response (&$sess, $key, $recv) {
 		if ( ! $recv )

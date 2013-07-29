@@ -189,12 +189,12 @@ Class sThread {
 	/**#@-*/
 	// }}}
 
-	// {{{ (object) sThread::__construct (void)
+	// {{{ (sThread) sThread::__construct (void)
 	/**
 	 * OOP 스타일의 sThread Class 초기화
 	 *
 	 * @access public
-	 * @return object
+	 * @return sThread
 	 */
 	function __construct () {
 		self::init ();

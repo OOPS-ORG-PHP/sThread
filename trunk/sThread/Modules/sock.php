@@ -54,7 +54,7 @@ Class sThread_SOCK {
 	/**
 	 * Class OOP 형식 초기화 메소드
 	 * @access public
-	 * @return object
+	 * @return sThread_SOCK
 	 */
 	function __construct () {
 		self::init ();
@@ -131,10 +131,10 @@ Class sThread_SOCK {
 	 * 세션의 상태를 단계로 변경한다.
 	 *
 	 * @access public
-	 * @param  boolean 변경한 상태가 마지막 단계일 경우 false를
-	 *                 반환한다.
-	 * @param  object  sThread 세션 변수 reference
-	 * @param  int     세션 키
+	 * @param  boolean  변경한 상태가 마지막 단계일 경우 false를
+	 *                  반환한다.
+	 * @param  stdClass sThread 세션 변수 reference
+	 * @param  int      세션 키
 	 */
 	function change_status (&$sess, $key) {
 		++$sess->status[$key];
@@ -151,8 +151,8 @@ Class sThread_SOCK {
 	 * 세션의 상태를 마지막 단계로 변경한다.
 	 *
 	 * @access public
-	 * @param  object sThread 세션 변수 reference
-	 * @param  int    세션 키
+	 * @param  stdClass sThread 세션 변수 reference
+	 * @param  int      세션 키
 	 */
 	function set_last_status (&$sess, $key) {
 		$sess->status[$key] = self::SOCK_CLOSE;
@@ -214,8 +214,8 @@ Class sThread_SOCK {
 	 *
 	 * @access public
 	 * @return void
-	 * @param  object 세션 object
-	 * @param  int    세션 키
+	 * @param  stdClass 세션 object
+	 * @param  int      세션 키
 	 */
 	function sock_request (&$sess, $key) {
 		return "\r\n";
