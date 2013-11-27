@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.9.4" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+ <name>sThread</name>
+ <channel>pear.oops.org</channel>
+ <summary>Single Thread Connector</summary>
+ <description>Use multiple connection with single thread process</description>
+ <lead>
+  <name>JoungKyun.Kim</name>
+  <user>joungkyun</user>
+  <email>joungkyun@gmail.com</email>
+  <active>yes</active>
+ </lead>
+ <date>2013-11-27</date>
+ <time>14:21:21</time>
+ <version>
+  <release>1.0.1</release>
+  <api>1.0.0</api>
+ </version>
+ <stability>
+  <release>stable</release>
+  <api>stable</api>
+ </stability>
+ <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+ <notes>
+* fixed worng access to empty property when clear session
+* rewrite chunked data logic on http module
+* fixed wrong rdata parsing on dns module
+* fixed wrong parsing SOA rdata
+* Support AAAA record
+* return binary data that decodes hex data when check fail.
+* add Vari::$result for return execute result
+* add phpDocument style comments
+* fixed undeclear object on PHP 5.4
+ </notes>
+ <contents>
+  <dir name="/">
+   <file md5sum="f10f112ba6ee60b686f1343d820e9105" name="sThread/Modules/dns.php" role="php" />
+   <file md5sum="16a92ce7095f8c200bdddc74847ca938" name="sThread/Modules/echo.php" role="php" />
+   <file md5sum="76868c8acedf72c1067d0bfe25cc4077" name="sThread/Modules/ftp.php" role="php" />
+   <file md5sum="ac3a8d0dd6c719e8d2bf3ba1df3f0f27" name="sThread/Modules/http.php" role="php" />
+   <file md5sum="38fe09805dba92d7a9b3905967bb53e8" name="sThread/Modules/memcached.php" role="php" />
+   <file md5sum="157a7b7100427d27a10eada98b3563c7" name="sThread/Modules/mysql.php" role="php" />
+   <file md5sum="523f9809987f5cf78f263c910936394f" name="sThread/Modules/sock.php" role="php" />
+   <file md5sum="fdf6b11d492b67098eb5b25df0be4d35" name="sThread/Addr.php" role="php" />
+   <file md5sum="bb502f6da42a4051ea9778b0f41ef50b" name="sThread/Log.php" role="php" />
+   <file md5sum="b9eef5749cedc95a6db71144fc5c6dc7" name="sThread/Module.php" role="php" />
+   <file md5sum="ca011aa5b77cd2c37aa5c42638148df1" name="sThread/Vari.php" role="php" />
+   <file md5sum="5669b7addcbf8685657e9e57744f0ba4" name="sThread.php" role="php" />
+  </dir>
+ </contents>
+ <dependencies>
+  <required>
+   <php>
+    <min>5.0.0</min>
+   </php>
+   <pearinstaller>
+    <min>1.4.3</min>
+   </pearinstaller>
+   <package>
+    <name>libevent</name>
+    <channel>pecl</channel>
+    <min>0.0.2</min>
+   </package>
+   <package>
+    <name>ePrint</name>
+    <channel>pear.oops.org</channel>
+    <min>1.0.1</min>
+   </package>
+  </required>
+ </dependencies>
+ <phprelease />
+ <changelog>
+  <release>
+   <version>
+    <release>1.0.1</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2012-11-01</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+   <notes>
+* fixed worng access to empty property when clear session
+* rewrite chunked data logic on http module
+* fixed wrong rdata parsing on dns module
+* fixed wrong parsing SOA rdata
+* Support AAAA record
+* return binary data that decodes hex data when check fail.
+* add Vari::$result for return execute result
+* add phpDocument style comments
+* fixed undeclear object on PHP 5.4
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>1.0.0</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2013-11-27</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+   <notes>
+* regist
+   </notes>
+  </release>
+ </changelog>
+</package>
