@@ -11,10 +11,10 @@
 		<email>joungkyun@gmail.com</email>
 		<active>yes</active>
 	</lead>
-	<date>2013-11-27</date>
-	<time>14:21:20</time>
+	<date>2014-01-25</date>
+	<time>18:47:50</time>
 	<version>
-		<release>1.0.1</release>
+		<release>1.0.2</release>
 		<api>1.0.0</api>
 	</version>
 	<stability>
@@ -22,15 +22,7 @@
 		<api>stable</api>
 	</stability>
 	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
-	<notes>* fixed worng access to empty property when clear session
-* rewrite chunked data logic on http module
-* fixed wrong rdata parsing on dns module
-* fixed wrong parsing SOA rdata
-* Support AAAA record
-* return binary data that decodes hex data when check fail.
-* add Vari::$result for return execute result
-* add phpDocument style comments
-* fixed undeclear object on PHP 5.4
+	<notes>
 </notes>
 	<contents>
 		<dir name="/">
@@ -72,6 +64,20 @@
 	<changelog>
 		<release>
 			<version>
+				<release>1.0.2</release>
+				<api>1.0.0</api>
+			</version>
+			<stability>
+				<release>stable</release>
+				<api>stable</api>
+			</stability>
+			<date>2014-01-25</date>
+			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+			<notes>
+</notes>
+		</release>
+		<release>
+			<version>
 				<release>1.0.1</release>
 				<api>1.0.0</api>
 			</version>
@@ -79,7 +85,7 @@
 				<release>stable</release>
 				<api>stable</api>
 			</stability>
-			<date>2012-11-01</date>
+			<date>2013-11-27</date>
 			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
 			<notes>* fixed worng access to empty property when clear session
 * rewrite chunked data logic on http module
@@ -101,7 +107,7 @@
 				<release>stable</release>
 				<api>stable</api>
 			</stability>
-			<date>2013-11-27</date>
+			<date>2012-10-14</date>
 			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
 			<notes>* regist
 </notes>
