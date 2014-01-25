@@ -12,7 +12,7 @@
 		<active>yes</active>
 	</lead>
 	<date>2014-01-25</date>
-	<time>18:47:50</time>
+	<time>18:50:38</time>
 	<version>
 		<release>1.0.2</release>
 		<api>1.0.0</api>
@@ -26,18 +26,18 @@
 </notes>
 	<contents>
 		<dir name="/">
-			<file role="php" md5sum="f10f112ba6ee60b686f1343d820e9105" name="sThread/Modules/dns.php" />
-			<file role="php" md5sum="16a92ce7095f8c200bdddc74847ca938" name="sThread/Modules/echo.php" />
-			<file role="php" md5sum="76868c8acedf72c1067d0bfe25cc4077" name="sThread/Modules/ftp.php" />
-			<file role="php" md5sum="ac3a8d0dd6c719e8d2bf3ba1df3f0f27" name="sThread/Modules/http.php" />
-			<file role="php" md5sum="38fe09805dba92d7a9b3905967bb53e8" name="sThread/Modules/memcached.php" />
-			<file role="php" md5sum="157a7b7100427d27a10eada98b3563c7" name="sThread/Modules/mysql.php" />
-			<file role="php" md5sum="523f9809987f5cf78f263c910936394f" name="sThread/Modules/sock.php" />
-			<file role="php" md5sum="fdf6b11d492b67098eb5b25df0be4d35" name="sThread/Addr.php" />
-			<file role="php" md5sum="bb502f6da42a4051ea9778b0f41ef50b" name="sThread/Log.php" />
-			<file role="php" md5sum="b9eef5749cedc95a6db71144fc5c6dc7" name="sThread/Module.php" />
-			<file role="php" md5sum="ca011aa5b77cd2c37aa5c42638148df1" name="sThread/Vari.php" />
-			<file role="php" md5sum="5669b7addcbf8685657e9e57744f0ba4" name="sThread.php" />
+			<file role="php" md5sum="eb94d6e6bb3cac9a30eb14812fc610f9" name="sThread/Modules/dns.php" />
+			<file role="php" md5sum="7f32992582c6320550fe8d80fa9d79a7" name="sThread/Modules/echo.php" />
+			<file role="php" md5sum="8e5db4c489924c0a35c8483ee312bcb0" name="sThread/Modules/ftp.php" />
+			<file role="php" md5sum="c8a8ffe70da83bc49dcd555906604475" name="sThread/Modules/http.php" />
+			<file role="php" md5sum="8a9dadef6587916b7e975c3e764e7c47" name="sThread/Modules/memcached.php" />
+			<file role="php" md5sum="3b27aced1bab6f8198f36c0dc5ddb75d" name="sThread/Modules/mysql.php" />
+			<file role="php" md5sum="adbadcf2458b3ad435e0d6cc8d10b0fd" name="sThread/Modules/sock.php" />
+			<file role="php" md5sum="6d6f35049e8f7b5b84028a8d8f7dad24" name="sThread/Addr.php" />
+			<file role="php" md5sum="d58a7c2865d636009d082b123fa76726" name="sThread/Log.php" />
+			<file role="php" md5sum="78330f68022147b65dac2091882519f9" name="sThread/Module.php" />
+			<file role="php" md5sum="f27d0a8a7ddcff849bcc2a49db4a6149" name="sThread/Vari.php" />
+			<file role="php" md5sum="512342eb0f56186aa4c25e4acf9cb1a5" name="sThread.php" />
 		</dir>
 	</contents>
 	<dependencies>
