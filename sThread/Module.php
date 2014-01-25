@@ -7,7 +7,7 @@
  * @package     sThread
  * @subpackage  sThread_CORE
  * @author      JoungKyun.Kim <http://oops.org>
- * @copyright   1997-2013 OOPS.ORG
+ * @copyright   (c) 2014 OOPS.ORG
  * @license     BSD License
  * @version     $Id$
  * @link        http://pear.oops.org/package/sThread
@@ -21,7 +21,7 @@
  * @package     sThread
  * @subpackage  sThread_CORE
  * @author      JoungKyun.Kim <http://oops.org>
- * @copyright   1997-2013 OOPS.ORG
+ * @copyright   (c) 2014 OOPS.ORG
  * @license     BSD License
  * @link        http://pear.oops.org/package/sThread
  */
