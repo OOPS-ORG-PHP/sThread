@@ -11,8 +11,8 @@
 		<email>joungkyun@gmail.com</email>
 		<active>yes</active>
 	</lead>
-	<date>2014-01-25</date>
-	<time>18:50:38</time>
+	<date>2015-02-16</date>
+	<time>18:45:54</time>
 	<version>
 		<release>1.0.2</release>
 		<api>1.0.0</api>
@@ -22,22 +22,22 @@
 		<api>stable</api>
 	</stability>
 	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
-	<notes>
+	<notes>* fixed wrong initialize object variable
 </notes>
 	<contents>
 		<dir name="/">
-			<file role="php" md5sum="eb94d6e6bb3cac9a30eb14812fc610f9" name="sThread/Modules/dns.php" />
-			<file role="php" md5sum="7f32992582c6320550fe8d80fa9d79a7" name="sThread/Modules/echo.php" />
-			<file role="php" md5sum="8e5db4c489924c0a35c8483ee312bcb0" name="sThread/Modules/ftp.php" />
-			<file role="php" md5sum="c8a8ffe70da83bc49dcd555906604475" name="sThread/Modules/http.php" />
-			<file role="php" md5sum="8a9dadef6587916b7e975c3e764e7c47" name="sThread/Modules/memcached.php" />
-			<file role="php" md5sum="3b27aced1bab6f8198f36c0dc5ddb75d" name="sThread/Modules/mysql.php" />
-			<file role="php" md5sum="adbadcf2458b3ad435e0d6cc8d10b0fd" name="sThread/Modules/sock.php" />
-			<file role="php" md5sum="6d6f35049e8f7b5b84028a8d8f7dad24" name="sThread/Addr.php" />
-			<file role="php" md5sum="d58a7c2865d636009d082b123fa76726" name="sThread/Log.php" />
-			<file role="php" md5sum="78330f68022147b65dac2091882519f9" name="sThread/Module.php" />
-			<file role="php" md5sum="f27d0a8a7ddcff849bcc2a49db4a6149" name="sThread/Vari.php" />
-			<file role="php" md5sum="512342eb0f56186aa4c25e4acf9cb1a5" name="sThread.php" />
+			<file role="php" md5sum="8b1ff8ba41ea32838118685af74de17a" name="sThread/Modules/dns.php" />
+			<file role="php" md5sum="4085d8663463cdb0e8030ab2ff709174" name="sThread/Modules/echo.php" />
+			<file role="php" md5sum="3a9b2692844bf22f53e3401e67afdec0" name="sThread/Modules/ftp.php" />
+			<file role="php" md5sum="c88ac938e05ec0549ee9199e50983627" name="sThread/Modules/http.php" />
+			<file role="php" md5sum="1319d1d204b1760120b70cdda9e19811" name="sThread/Modules/memcached.php" />
+			<file role="php" md5sum="56f729c619dae4be7b0e31f9e09fa42a" name="sThread/Modules/mysql.php" />
+			<file role="php" md5sum="a12ad41686b941903dbe78d187ce55b4" name="sThread/Modules/sock.php" />
+			<file role="php" md5sum="eeea6300b438a40e09e9ecc95d0fc3d3" name="sThread/Addr.php" />
+			<file role="php" md5sum="25d5d5d6107a382670b2c3b920add9ff" name="sThread/Log.php" />
+			<file role="php" md5sum="8e290a5c551229bb6b69ab6b6ecad5a9" name="sThread/Module.php" />
+			<file role="php" md5sum="eb9009150118e26b915d15671027dcd5" name="sThread/Vari.php" />
+			<file role="php" md5sum="87d8b692b842cd140a7c84cf363ad61e" name="sThread.php" />
 		</dir>
 	</contents>
 	<dependencies>
@@ -71,9 +71,9 @@
 				<release>stable</release>
 				<api>stable</api>
 			</stability>
-			<date>2014-01-25</date>
+			<date>2015-02-16</date>
 			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
-			<notes>
+			<notes>* fixed wrong initialize object variable
 </notes>
 		</release>
 		<release>

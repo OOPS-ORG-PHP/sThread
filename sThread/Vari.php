@@ -322,7 +322,7 @@ Class Vari {
 	 * @param  mixed
 	 */
 	function objectInit (&$obj) {
-		if ( empty ($obj) || is_object ($obj) )
+		if ( empty ($obj) || ! is_object ($obj) )
 			$obj = new stdClass;
 	}
 	// }}}
