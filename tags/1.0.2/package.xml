@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.9.4" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+ <name>sThread</name>
+ <channel>pear.oops.org</channel>
+ <summary>Single Thread Connector</summary>
+ <description>Use multiple connection with single thread process</description>
+ <lead>
+  <name>JoungKyun.Kim</name>
+  <user>joungkyun</user>
+  <email>joungkyun@gmail.com</email>
+  <active>yes</active>
+ </lead>
+ <date>2015-02-17</date>
+ <time>15:37:35</time>
+ <version>
+  <release>1.0.2</release>
+  <api>1.0.0</api>
+ </version>
+ <stability>
+  <release>stable</release>
+  <api>stable</api>
+ </stability>
+ <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+ <notes>
+* fixed wrong initialize object variable
+* add default protocol per modules
+ </notes>
+ <contents>
+  <dir name="/">
+   <file md5sum="e6b5784514f2603a74905e2c8a8879d2" name="sThread/Modules/dns.php" role="php" />
+   <file md5sum="e9110f3bcd077936e04a65b9c921ac3c" name="sThread/Modules/echo.php" role="php" />
+   <file md5sum="2a77f76387d480cd06f86bdfa861ff2b" name="sThread/Modules/ftp.php" role="php" />
+   <file md5sum="9f59250fdc525f7e5b442c25fc8cf751" name="sThread/Modules/http.php" role="php" />
+   <file md5sum="adb1ff7b66d123814f0484d2a81b5e33" name="sThread/Modules/memcached.php" role="php" />
+   <file md5sum="1259880d3858dc337e1d66cf55c17b52" name="sThread/Modules/mysql.php" role="php" />
+   <file md5sum="92ba32b0baa63a0e03f0779f09c74f6c" name="sThread/Modules/sock.php" role="php" />
+   <file md5sum="128abe7ef77b4741b57b5293bb02125f" name="sThread/Addr.php" role="php" />
+   <file md5sum="11d85f77f57e04aa3417d8bcc4895854" name="sThread/Log.php" role="php" />
+   <file md5sum="0094b705b9ffd892b9949410158671f4" name="sThread/Module.php" role="php" />
+   <file md5sum="61ec62bca1a810e285e8d536407b709d" name="sThread/Vari.php" role="php" />
+   <file md5sum="06a653d062f1a234c4d143b79ac2d8cd" name="sThread.php" role="php" />
+  </dir>
+ </contents>
+ <dependencies>
+  <required>
+   <php>
+    <min>5.0.0</min>
+   </php>
+   <pearinstaller>
+    <min>1.4.3</min>
+   </pearinstaller>
+   <package>
+    <name>libevent</name>
+    <channel>pecl</channel>
+    <min>0.0.2</min>
+   </package>
+   <package>
+    <name>ePrint</name>
+    <channel>pear.oops.org</channel>
+    <min>1.0.1</min>
+   </package>
+  </required>
+ </dependencies>
+ <phprelease />
+ <changelog>
+  <release>
+   <version>
+    <release>1.0.2</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2015-02-17</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+   <notes>
+* fixed wrong initialize object variable
+* add default protocol per modules
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>1.0.1</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2013-11-27</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+   <notes>
+* fixed worng access to empty property when clear session
+* rewrite chunked data logic on http module
+* fixed wrong rdata parsing on dns module
+* fixed wrong parsing SOA rdata
+* Support AAAA record
+* return binary data that decodes hex data when check fail.
+* add Vari::$result for return execute result
+* add phpDocument style comments
+* fixed undeclear object on PHP 5.4
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>1.0.0</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2012-10-14</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
+   <notes>
+* regist
+   </notes>
+  </release>
+ </changelog>
+</package>
