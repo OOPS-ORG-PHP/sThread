@@ -270,7 +270,7 @@ Class sThread {
 	 * @param  int    소켓 연결/읽기/쓰기 타임아웃
 	 * @param  string tcp 또는 udp. 기본값 tcp.
 	 */
-	function execute ($hosts, $tmout = 1, $protocol = 'tcp') {
+	function execute ($hosts, $tmout = 1, $protocol = null) {
 		if ( ! is_array ($hosts) )
 			$hosts = array ($hosts);
 
@@ -292,11 +292,19 @@ Class sThread {
 				$key++;
 				continue;
 			}
+
 			$sess->opt[$key] = sThread_Address::extraOption ($newline);
 			$sess->addr[$key] = explode (':', $newline);
-			$sess->proto[$key] = $protocol;
 
 			self::explodeAddr ($host, $port, $type, $newline);
+
+			if ( $protocol == null ) {
+				$protocol = sThread_Module::proto ($type);
+				if ( ! $protocol )
+					$protocol = 'tcp';
+			}
+
+			$sess->proto[$key] = $protocol;
 			$addr = "{$protocol}://{$host}:{$port}";
 
 			$time->cstart[$key] = microtime ();

@@ -50,12 +50,17 @@ Class sThread_DNS {
 	 *
 	 * @var bool
 	 */
-	static public $clearsession = true;
+	static public $clearsession;
+	/**
+	 * DNS 모듈이 사용하는 protocol
+	 * @var string
+	 */
+	static public $protocol;
 	/**
 	 * DNS 모듈이 사용하는 기본 포트 번호
 	 * @var int
 	 */
-	static public $port = 53;
+	static public $port;
 
 	const DNS_REQUEST  = 1;
 	const DNS_RESPONSE = 2;
@@ -111,6 +116,7 @@ Class sThread_DNS {
 		self::init ();
 		$this->clearsession = &self::$clearsession;
 		$this->port         = &self::$port;
+		$this->protocol     = &self::$protocol;
 		$this->dns          = &self::$dns;
 	}
 	// }}}
@@ -124,7 +130,8 @@ Class sThread_DNS {
 	 */
 	function init () {
 		self::$clearsession = true;
-		self::$port = 53;
+		self::$port         = 53;
+		self::$protocol     = 'udp';
 	}
 	// }}}
 

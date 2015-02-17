@@ -77,12 +77,17 @@ Class sThread_HTTP {
 	 *
 	 * @var bool
 	 */
-	static public $clearsession = true;
+	static public $clearsession;
+	/**
+	 * HTTP 모듈이 사용하는 protocol
+	 * @var string
+	 */
+	static public $protocol;
 	/**
 	 * HTTP 모듈이 사용하는 기본 포트 번호
 	 * @var int
 	 */
-	static public $port = 80;
+	static public $port;
 
 	const HTTP_REQUEST  = 1;
 	const HTTP_RESPONSE = 2;
@@ -111,10 +116,11 @@ Class sThread_HTTP {
 		self::init ();
 
 		$this->clearsession = &self::$clearsession;
-		$this->port  = &self::$port;
-		$this->uri   = &self::$uri;
-		$this->agent = &self::$agent;
-		$this->sess  = &self::$sess;
+		$this->port         = &self::$port;
+		$this->protocol     = &self::$protocol;
+		$this->uri          = &self::$uri;
+		$this->agent        = &self::$agent;
+		$this->sess         = &self::$sess;
 	}
 	// }}}
 
@@ -126,6 +132,9 @@ Class sThread_HTTP {
 	 * @return void
 	 */
 	function init () {
+		self::$clearsession = true;
+		self::$port         = 80;
+		self::$protocol     = 'tcp';
 		self::$sess = (object) array (
 			'returnCode' => array (),
 			'chunked'    => array (),

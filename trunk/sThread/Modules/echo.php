@@ -45,12 +45,17 @@ Class sThread_ECHO {
 	 *
 	 * @var bool
 	 */
-	static public $clearsession = false;
+	static public $clearsession;
+	/**
+	 * ECHO 모듈이 사용하는 protocol
+	 * @var string
+	 */
+	static public $protocol;
 	/**
 	 * ECHO 모듈이 사용하는 기본 포트 번호
 	 * @var int
 	 */
-	static public $port = 7;
+	static public $port;
 
 	const ECHO_REQUEST  = 1;
 	const ECHO_RESPONSE = 2;
@@ -68,6 +73,7 @@ Class sThread_ECHO {
 		self::init ();
 		$this->clearsession = &self::$clearsession;
 		$this->port         = &self::$port;
+		$this->protocol     = &self::$protocol;
 	}
 	// }}}
 
@@ -80,6 +86,8 @@ Class sThread_ECHO {
 	 */
 	function init () {
 		self::$clearsession = false;
+		self::$port         = 7;
+		self::$protocol     = 'tcp';
 	}
 	// }}}
 

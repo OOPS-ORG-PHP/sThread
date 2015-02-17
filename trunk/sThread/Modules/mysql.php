@@ -55,6 +55,11 @@ Class sThread_MYSQL {
 	 */
 	static public $clearsession = true;
 	/**
+	 * MYSQL 모듈이 사용하는 protocol
+	 * @var string
+	 */
+	static public $protocol = 'tcp';
+	/**
 	 * MYSQL 모듈이 사용하는 기본 포트 번호
 	 * @var int
 	 */
@@ -109,6 +114,7 @@ Class sThread_MYSQL {
 		self::init ();
 		$this->clearsession = &self::$clearsession;
 		$this->port         = &self::$port;
+		$this->protocol     = &self::$protocol;
 	}
 	// }}}
 
@@ -122,6 +128,7 @@ Class sThread_MYSQL {
 	function init () {
 		self::$clearsession = true;
 		self::$port         = 3306;
+		self::$protocol     = 'tcp';
 
 		self::$server       = array ();
 		self::$qstatus      = array ();
