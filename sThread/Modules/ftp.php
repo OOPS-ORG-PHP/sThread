@@ -51,12 +51,17 @@ Class sThread_FTP {
 	 *
 	 * @var bool
 	 */
-	static public $clearsession = false;
+	static public $clearsession;
+	/**
+	 * FTP 모듈이 사용하는 protocol
+	 * @var string
+	 */
+	static public $protocol;
 	/**
 	 * FTP 모듈이 사용하는 기본 포트 번호
 	 * @var int
 	 */
-	static public $port = 21;
+	static public $port;
 
 	const FTP_BANNER      = 1;
 	const FTP_SENDUSER    = 2;
@@ -83,6 +88,7 @@ Class sThread_FTP {
 		self::init ();
 		$this->clearsession = &self::$clearsession;
 		$this->port         = &self::$port;
+		$this->protocol     = &self::$protocol;
 	}
 	// }}}
 
@@ -95,7 +101,8 @@ Class sThread_FTP {
 	 */
 	function init () {
 		self::$clearsession = false;
-		self::$port = 21;
+		self::$port         = 21;
+		self::$protocol     = 'tcp';
 	}
 	// }}}
 

@@ -72,12 +72,17 @@ Class sThread_MEMCACHED {
 	 *
 	 * @var bool
 	 */
-	static public $clearsession = false;
+	static public $clearsession;
+	/**
+	 * MEMCACHE 모듈이 사용하는 protocol
+	 * @var string
+	 */
+	static public $protocol;
 	/**
 	 * MEMCACHED 모듈이 사용하는 기본 포트 번호
 	 * @var int
 	 */
-	static public $port = 11211;
+	static public $port;
 
 	const MEMCACHED_REQUEST  = 1;
 	const MEMCACHED_RESPONSE = 2;
@@ -96,6 +101,7 @@ Class sThread_MEMCACHED {
 		self::init ();
 		$this->clearsession = &self::$clearsession;
 		$this->port         = &self::$port;
+		$this->protocol     = &self::$protocol;
 	}
 	// }}}
 
@@ -108,7 +114,8 @@ Class sThread_MEMCACHED {
 	 */
 	function init () {
 		self::$clearsession = false;
-		self::$port = 11211;
+		self::$port         = 11211;
+		self::$protocol     = 'tcp';
 	}
 	// }}}
 

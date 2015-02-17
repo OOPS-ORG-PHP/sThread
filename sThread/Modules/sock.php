@@ -38,12 +38,17 @@ Class sThread_SOCK {
 	 *
 	 * @var bool
 	 */
-	static public $clearsession = false;
+	static public $clearsession;
+	/**
+	 * SOCK 모듈이 사용하는 protocol
+	 * @var string
+	 */
+	static public $protocol;
 	/**
 	 * SOCK 모듈이 사용하는 기본 포트 번호
 	 * @var int
 	 */
-	static public $port = 12345;
+	static public $port;
 
 	const SOCK_REQUEST  = 1;
 	const SOCK_CLOSE    = 2;
@@ -60,6 +65,7 @@ Class sThread_SOCK {
 		self::init ();
 		$this->clearsession = &self::$clearsession;
 		$this->port         = &self::$port;
+		$this->protocol     = &self::$protocol;
 	}
 	// }}}
 
@@ -72,6 +78,8 @@ Class sThread_SOCK {
 	 */
 	function init () {
 		self::$clearsession = false;
+		self::$port         = 12345;
+		self::$protocol     = 'tcp';
 	}
 	// }}}
 

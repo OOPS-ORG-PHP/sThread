@@ -29,6 +29,7 @@ Class sThread_Module {
 	// {{{ properties
 	static public $obj;
 	static public $port;
+	static public $proto;
 	static private $moddir = '/sThread/Modules';
 	// }}}
 
@@ -95,6 +96,7 @@ Class sThread_Module {
 				self::$obj = new stdClass;
 			self::$obj->$mod = new $class;
 			self::$port[$mod] = self::$obj->$mod->port;
+			self::$proto[$mod] = self::$obj->$mod->protocol;
 		}
 	}
 	// }}}
@@ -129,6 +131,26 @@ Class sThread_Module {
 		foreach ( self::$port as $key => $val )
 			if ( $val == $port )
 				return $key;
+		return false;
+	}
+	// }}}
+
+	// {{{ (string) sThread_Module::proto ($v)
+	/**
+	 * 포트 번호또는 모듈이름에 대한 protocol을 반환
+	 *
+	 * @access public
+	 * @return string
+	 * @param  int    포트 번호 or 모듈 이름
+	 */
+	function proto ($v) {
+		if ( ! $v )
+			return false;
+
+		$type = is_numeric ($v) ? self::type($port) : $v;
+
+		if ( isset (self::$proto[$type]) )
+			return self::$proto[$type];
 		return false;
 	}
 	// }}}
