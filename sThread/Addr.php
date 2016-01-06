@@ -39,7 +39,7 @@ Class sThread_Address {
 	 * @return string
 	 * @param  string
 	 */
-	function parse ($buf) {
+	static function parse ($buf) {
 		$extra = '';
 		if ( preg_match ('/^(.+)\|(.+)$/', $buf, $matches) ) {
 			$buf = $matches[1];
@@ -121,7 +121,7 @@ Class sThread_Address {
 	 * @return stdClass
 	 * @param  string
 	 */
-	function extraOption (&$type) {
+	static function extraOption (&$type) {
 		if ( ! preg_match ('/^(.+)\|(.+)$/', $type, $matches) )
 			return false;
 

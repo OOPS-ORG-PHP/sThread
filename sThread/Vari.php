@@ -80,28 +80,20 @@ Class Vari {
 	 *                정리한다. false의 경우, Vari Class의 모든
 	 *                멤버를 초기화 한다. 기본값 false
 	 */
-	function clear ($b = false) {
-		if ( $b === true ) {
-			$target = array ('sock', 'status', 'event', 'send', 'proto');
-			foreach ( $target as $mem ) {
-				self::objectUnset (self::$sess->$mem);
-				unset (self::$sess->$mem);
-			}
-
-			self::objectUnset (self::$time);
-			return;
-		}
-
-		self::objectUnset (self::$res);
+	static function clear ($b = false) {
+		if ( $b !== true )
+			self::objectUnset (self::$res);
 		self::objectUnset (self::$sess);
 		self::objectUnset (self::$time);
 
-		Vari::$res = (object) array (
-			'total'   => 0,
-			'success' => 0,
-			'failure' => 0,
-			'status'  => array ()
-		);
+		if ( $b !== true ) {
+			Vari::$res = (object) array (
+				'total'   => 0,
+				'success' => 0,
+				'failure' => 0,
+				'status'  => array ()
+			);
+		}
 
 		Vari::$sess = (object) array (
 			'addr'   => array (),
@@ -137,7 +129,7 @@ Class Vari {
 	 * @return void
 	 * @param  mixed unset할 array 또는 object
 	 */
-	function objectUnset (&$r) {
+	static function objectUnset (&$r) {
 		switch (($type = gettype ($r))) {
 			case 'object' :
 			case 'array' :
@@ -228,7 +220,7 @@ Class Vari {
 	 * @param  string 나중에 측정된 microtime() 의 결과값
 	 * @param  int    보정할 millisencond 값
 	 */
-	function chkTime ($o, $n, $t = 0) {
+	static function chkTime ($o, $n, $t = 0) {
 		$o = self::hmicrotime ($o);
 		$n = self::hmicrotime ($n);
 
@@ -262,7 +254,7 @@ Class Vari {
 	 * @return string
 	 * @param  array
 	 */
-	function timeCalc ($a) {
+	static function timeCalc ($a) {
 		if ( ! is_array ($a) )
 			return '0 msec';
 
@@ -321,7 +313,7 @@ Class Vari {
 	 * @return void
 	 * @param  mixed
 	 */
-	function objectInit (&$obj) {
+	static function objectInit (&$obj) {
 		if ( empty ($obj) || ! is_object ($obj) )
 			$obj = new stdClass;
 	}
@@ -339,7 +331,7 @@ Class Vari {
 	 * @return float
 	 * @param  string microtime() 의 결과 값
 	 */
-	private function hmicrotime ($t) {
+	static private function hmicrotime ($t) {
 		if ( preg_match ('/^([^ ]+)[ \t](.+)/', $t, $matches) )
 			return (float) $matches[2] + (float) $matches[1];
 		return $t;

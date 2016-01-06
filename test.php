@@ -53,7 +53,7 @@ print_r (Vari::$res);
 
 Vari::clear ();
 unset ($host);
-$host = 'ns1.tmonc.net:53|query=>kldp.org';
+$host = 'ns.kldp.org:53|query=>kldp.org';
 $s->execute ($host, 1, 'udp');
 print_r (Vari::$res);
 

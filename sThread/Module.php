@@ -36,9 +36,9 @@ Class sThread_Module {
 	// {{{ (void) __construct (void)
 	function __construct () {
 		self::init ();
-		#$this->obj = &self::$obj;
-		#$this->port = &self::$port;
-		#$this->moddir = &self::$moddir;
+		$this->obj = &self::$obj;
+		$this->port = &self::$port;
+		$this->moddir = &self::$moddir;
 	}
 	// }}}
 
@@ -58,7 +58,7 @@ Class sThread_Module {
 	 * @access public
 	 * @return void
 	 */
-	function init () {
+	static function init () {
 		$mods_r = explode (':', ini_get ('include_path'));
 		foreach ( $mods_r as $_mods ) {
 			if ( is_dir ($_mods . self::$moddir) ) {
@@ -109,7 +109,7 @@ Class sThread_Module {
 	 * @return int
 	 * @param  string 모듈 이름
 	 */
-	function port ($type) {
+	static function port ($type) {
 		if ( ! $type )
 			return false;
 		return self::$port[$type];
@@ -124,7 +124,7 @@ Class sThread_Module {
 	 * @return string
 	 * @param  int    포트 번호
 	 */
-	function type ($port) {
+	static function type ($port) {
 		if ( ! $port )
 			return false;
 
@@ -143,7 +143,7 @@ Class sThread_Module {
 	 * @return string
 	 * @param  int    포트 번호 or 모듈 이름
 	 */
-	function proto ($v) {
+	static function proto ($v) {
 		if ( ! $v )
 			return false;
 
@@ -159,6 +159,6 @@ Class sThread_Module {
 /**
  * sThread_Module 을 구동
  */
-sThread_Module::init ();
-$mod = &sThread_Module::$obj;
+//sThread_Module::init ();
+//$mod = &sThread_Module::$obj;
 ?>
