@@ -8,7 +8,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   (c) 2015 OOPS.ORG
  * @license     BSD License
- * @version     $Id$
+ * @version     $Id: mysql.php 95 2015-02-17 06:35:51Z oops $
  * @link        http://pear.oops.org/package/sThread
  * @see         http://forge.mysql.com/wiki/MySQL_Internals_ClientServer_Protocol MySQL Internals ClientServer Protocol
  * @filesource

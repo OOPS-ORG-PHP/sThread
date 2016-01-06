@@ -8,7 +8,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   (c) 2015 OOPS.ORG
  * @license     BSD License
- * @version     $Id$
+ * @version     $Id: dns.php 95 2015-02-17 06:35:51Z oops $
  * @link        http://pear.oops.org/package/sThread
  * @see         http://www.freesoft.org/CIE/RFC/1035/39.htm
  * @filesource

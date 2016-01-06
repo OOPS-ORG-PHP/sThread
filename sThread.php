@@ -17,7 +17,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   (c) 2015 OOPS.ORG
  * @license     BSD License
- * @version     $Id$
+ * @version     $Id: sThread.php 95 2015-02-17 06:35:51Z oops $
  * @link        http://pear.oops.org/package/sThread
  * @since       File available since relase 1.0.0
  * @filesource
