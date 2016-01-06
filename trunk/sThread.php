@@ -46,45 +46,6 @@ require_once 'sThread/Addr.php';
 require_once 'sThread/Log.php';
 // }}}
 
-// {{{ libevent call functions
-/**
- * libevent에서 사용되는 read callback wrapper 함수
- *
- * 실제로 frontend에서는 사용할 일이 없다.
- *
- * @return bool
- * @param  resource libevent resource
- * @param  array    callback argument
- */
-function sThread_readCallback ($buf, $arg) {
-	return sThread::readCallback ($buf, $arg);
-}
-
-/**
- * libevent에서 사용되는 write callback wrapper 함수
- *
- * 실제로 frontend에서는 사용할 일이 없다.
- *
- * @return bool
- * @param  resource libevent resource
- * @param  array    callback argument
- */
-function sThread_writeCallback ($buf, $arg) {
-	return sThread::writeCallback ($buf, $arg);
-}
-
-/**
- * libevent에서 사용되는 예외 callback wrapper 함수
- *
- * 이 함수는 아무런 작동을 하지 않는다.
- *
- * @return null
- * @param  resource libevent resource
- * @param  array    callback argument
- */
-function sThread_exceptionCallback ($buf, $arg) { }
-// }}}
-
 /**
  * sThread 패키지의 메인 Class
  *
@@ -225,9 +186,9 @@ Class sThread {
 		if ( $mod_no_init === false ) {
 			sThread_Module::init ();
 			self::$mod = &sThread_Module::$obj;
+			self::$async  = false;
 		}
 
-		self::$async  = false;
 		self::$result = false;
 		Vari::$result = &self::$result;
 
@@ -339,6 +300,8 @@ Class sThread {
 		}
 
 		$base = event_base_new ();
+		ePrint::dPrintf (Vari::DEBUG1, "[%-15s] Make event construct\n", $base);
+
 		foreach ( $sess->sock as $key => $val ) {
 			if ( ! is_resource ($val) )
 				continue;
@@ -346,12 +309,20 @@ Class sThread {
 			$time->pstart[$key] = microtime ();
 			$sess->event[$key] = event_buffer_new (
 					$sess->sock[$key],
-					'sThread_readCallback',
-					'sThread_writeCallback',
-					'sThread_exceptionCallback', array ($key)
+					'self::readCallback',
+					'self::writeCallback',
+					'self::exceptionCallback', array ($key)
 			);
+
+			ePrint::dPrintf (Vari::DEBUG1, "[%-15s] %s:%d (%d) make event buffer\n",
+						$sess->event[$key], $host, $port, $key);
+
 			event_buffer_timeout_set ($sess->event[$key], self::$tmout, self::$tmout);
+
+			ePrint::dPrintf (Vari::DEBUG1, "[%-15s] set event buffer .. ",
+						$base, $sess->event[$key]);
 			event_buffer_base_set ($sess->event[$key], $base);
+			ePrint::dPrintf (Vari::DEBUG1, "%s\n", $sess->event[$key]);
 
 			if ( self::currentStatus ($key) === Vari::EVENT_READY_RECV )
 				event_buffer_enable ($sess->event[$key], EV_READ);
@@ -359,12 +330,27 @@ Class sThread {
 				event_buffer_enable ($sess->event[$key], EV_WRITE);
 		}
 
+		ePrint::dPrintf (Vari::DEBUG1, "[%-15s] regist event loop\n", $base);
 		event_base_loop ($base);
 		self::clearEvent ();
+		ePrint::dPrintf (Vari::DEBUG1, "[%-15s] destruct event construct\n", $base);
 		event_base_free ($base);
+		unset ($base);
 		// 필요 없는 정보 정리
 		Vari::clear (true);
 	}
+	// }}}
+
+	/**
+	 * libevent에서 exception callback
+	 *
+	 * 이 함수는 아무런 작동을 하지 않는다.
+	 *
+	 * @return void
+	 * @param  resource libevent resource
+	 * @param  array    callback argument
+	 */
+	function exceptionCallback ($buf, $arg) { }
 	// }}}
 
 	// {{{ (bool) sThread::readCallback ($buf, $arg)
@@ -395,6 +381,7 @@ Class sThread {
 
 		if ( ($handler = self::getCallname ($key)) === false ) {
 			self::socketClose ($key);
+			ePrint::dPrintf (Vari::DEBUG1, "[%-15s] free event buffer on read calllback\n", $sess->event[$key]);
 			event_buffer_free ($sess->event[$key]);
 			return true;
 		}
@@ -421,6 +408,7 @@ Class sThread {
 				$res->failure++;
 				self::$mod->$type->set_last_status ($sess, $key);
 				self::socketClose ($key);
+				ePrint::dPrintf (Vari::DEBUG1, "[%-15s] free event buffer on read callback\n", $sess->event[$key]);
 				event_buffer_free ($sess->event[$key]);
 				return true;
 			}
@@ -436,6 +424,7 @@ Class sThread {
 		 */
 		if ( ($is_rw = self::nextStatus ($key)) === false ) {
 			self::socketClose ($key);
+			ePrint::dPrintf (Vari::DEBUG1, "[%-15s] free event buffer on read callback\n", $sess->event[$key]);
 			event_buffer_free ($sess->event[$key]);
 			return true;
 		}
@@ -472,6 +461,7 @@ Class sThread {
 			 */
 			if ( ($is_rw = self::nextStatus ($key)) === false ) {
 				self::socketClose ($key);
+				ePrint::dPrintf (Vari::DEBUG1, "[%-15s] free event buffer on write callback\n", $sess->event[$key]);
 				event_buffer_free ($sess->event[$key]);
 			}
 			return true;
@@ -486,6 +476,7 @@ Class sThread {
 
 		if ( ($handler = self::getCallname ($key)) === false ) {
 			self::socketClose ($key);
+			ePrint::dPrintf (Vari::DEBUG1, "[%-15s] free event buffer on write callback\n", $sess->event[$key]);
 			event_buffer_free ($sess->event[$key]);
 			return true;
 		}
@@ -500,6 +491,7 @@ Class sThread {
 			$res->failure++;
 			self::$mod->$type->set_last_status ($sess, $key);
 			self::socketClose ($key);
+			ePrint::dPrintf (Vari::DEBUG1, "[%-15s] free event buffer on write callback\n", $sess->event[$key]);
 			event_buffer_free ($sess->event[$key]);
 			return true;
 		}
@@ -512,6 +504,7 @@ Class sThread {
 			self::$mod->$type->set_last_status ($sess, $key);
 			$res->status[$key] = array ("{$host}:{$port}", false, "{$handler} Send error");
 			self::socketClose ($key);
+			ePrint::dPrintf (Vari::DEBUG1, "[%-15s] free event buffer on write callback\n", $sess->event[$key]);
 			event_buffer_free ($sess->event[$key]);
 			return true;
 		}
@@ -728,8 +721,10 @@ Class sThread {
 
 		sThread_Log::save ($key, $sess->recv[$key]);
 
-		if ( is_resource ($sess->sock[$key]) )
+		if ( is_resource ($sess->sock[$key]) ) {
+			ePrint::dPrintf (Vari::DEBUG2, "[%-15s] close socket call\n", $sess->sock[$key]);
 			fclose ($sess->sock[$key]);
+		}
 
 		self::timeResult ($key);
 	}

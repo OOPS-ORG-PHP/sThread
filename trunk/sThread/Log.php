@@ -63,7 +63,7 @@ Class sThread_Log {
 	 * @param  int    세션 키
 	 * @param  string 로그 내용
 	 */
-	function save ($key, $recv) {
+	static function save ($key, $recv) {
 		$res = &Vari::$res->status[$key];
 
 		// no logging
