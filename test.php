@@ -16,6 +16,12 @@ if ( version_compare (PHP_VERSION, '5.3.0', '>=') ) {
 	date_default_timezone_set ('Asia/Seoul');
 }
 
+/*
+ * for libevent2 warning messages
+ */
+fclose (STDERR);
+$STDERR = fopen('/dev/dull', 'wb');
+
 require_once 'sThread.php';
 
 $s = new sThread;
