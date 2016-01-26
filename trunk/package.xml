@@ -12,7 +12,7 @@
 		<active>yes</active>
 	</lead>
 	<date>2016-01-27</date>
-	<time>00:24:25</time>
+	<time>02:20:41</time>
 	<version>
 		<release>1.1.1</release>
 		<api>1.0.0</api>
@@ -23,13 +23,14 @@
 	</stability>
 	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
 	<notes>* fixed wrong header name Accpt to Accept on http module
+* enhanced debug messages
 </notes>
 	<contents>
 		<dir name="/">
 			<file role="php" md5sum="e6b5784514f2603a74905e2c8a8879d2" name="sThread/Modules/dns.php" />
 			<file role="php" md5sum="e9110f3bcd077936e04a65b9c921ac3c" name="sThread/Modules/echo.php" />
 			<file role="php" md5sum="2a77f76387d480cd06f86bdfa861ff2b" name="sThread/Modules/ftp.php" />
-			<file role="php" md5sum="d0dd8a5be34368ffa7c930b07efe969a" name="sThread/Modules/http.php" />
+			<file role="php" md5sum="3558d72ae950f873cb081d347ba3d54f" name="sThread/Modules/http.php" />
 			<file role="php" md5sum="adb1ff7b66d123814f0484d2a81b5e33" name="sThread/Modules/memcached.php" />
 			<file role="php" md5sum="1259880d3858dc337e1d66cf55c17b52" name="sThread/Modules/mysql.php" />
 			<file role="php" md5sum="92ba32b0baa63a0e03f0779f09c74f6c" name="sThread/Modules/sock.php" />
@@ -37,7 +38,7 @@
 			<file role="php" md5sum="80e0e89ab57ef800de9cafa3b73bd42a" name="sThread/Log.php" />
 			<file role="php" md5sum="8b1d2c5bb39a107ca26c3984260d8559" name="sThread/Module.php" />
 			<file role="php" md5sum="731e9c37f8293cea12849003bea5746b" name="sThread/Vari.php" />
-			<file role="php" md5sum="6b625133fd54114d40048f3aed24e19b" name="sThread.php" />
+			<file role="php" md5sum="79e652669ccac96d8d63f23e73b0e280" name="sThread.php" />
 		</dir>
 	</contents>
 	<dependencies>
@@ -74,6 +75,7 @@
 			<date>2016-01-27</date>
 			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
 			<notes>* fixed wrong header name Accpt to Accept on http module
+* enhanced debug messages
 </notes>
 		</release>
 		<release>
