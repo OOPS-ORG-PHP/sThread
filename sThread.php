@@ -278,8 +278,13 @@ Class sThread {
 
 			if ( self::$async !== true && ! is_resource ($sess->sock[$key]) ) {
 				if ( ePrint::$debugLevel >= Vari::DEBUG1 )
-					ePrint::ePrintf ("%s:%d (%02d) Failed socket create: %s",
-								array ($host, $port, $key, $errstr));
+					ePrint::ePrintf (
+						"%s:%d (%02d) Failed socket create: %s on %s:%d[%s::%s]",
+						array (
+							$host, $port, $key, $errstr,
+							self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
+						)
+					);
 				$res->failure++;
 				self::$mod->$type->set_last_status ($sess, $key);
 				$res->status[$key] = array ("{$host}:{$port}", false, "Failed socket create: {$errstr}");
@@ -290,8 +295,9 @@ Class sThread {
 			$time->cend[$key] = microtime ();
 
 			ePrint::dPrintf (
-				Vari::DEBUG1, "[%-12s #%d] %s:%d (%d) Socket create success\n",
-				get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port, $key
+				Vari::DEBUG1, "[%-12s #%d] %s:%d (%d) Socket create success on %s:%d[%s::%s]\n",
+				get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port, $key,
+				self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 			);
 
 			$sess->status[$key] = 1;
@@ -306,8 +312,9 @@ Class sThread {
 
 		$base = event_base_new ();
 		ePrint::dPrintf (
-			Vari::DEBUG1, "[%-12s #%02d] Make event construct\n",
-			get_resource_type ($base), $base
+			Vari::DEBUG1, "[%-12s #%02d] Make event construct on %s:%d[%s::%s]\n",
+			get_resource_type ($base), $base,
+			self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 		);
 
 		foreach ( $sess->sock as $key => $val ) {
@@ -323,8 +330,9 @@ Class sThread {
 			);
 
 			ePrint::dPrintf (
-				Vari::DEBUG1, "[%-12s #%02d] %s:%d (%d) make event buffer\n",
-				get_resource_type ($sess->event[$key]), $sess->event[$key], $host_all[$key], $port_all[$key], $key
+				Vari::DEBUG1, "[%-12s #%02d] %s:%d (%d) make event buffer on %s:%d[%s::%s]\n",
+				get_resource_type ($sess->event[$key]), $sess->event[$key], $host_all[$key], $port_all[$key], $key,
+				self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 			);
 
 			event_buffer_timeout_set ($sess->event[$key], self::$tmout, self::$tmout);
@@ -334,8 +342,9 @@ Class sThread {
 				get_resource_type ($base), $base, $sess->event[$key]);
 			event_buffer_base_set ($sess->event[$key], $base);
 			ePrint::dPrintf (
-				Vari::DEBUG1, "%s #%02d\n",
-				get_resource_type ($sess->event[$key]), $sess->event[$key]
+				Vari::DEBUG1, "%s #%02d on %s:%d[%s::%s]\n",
+				get_resource_type ($sess->event[$key]), $sess->event[$key],
+				self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 			);
 
 			if ( self::currentStatus ($key) === Vari::EVENT_READY_RECV )
@@ -347,14 +356,16 @@ Class sThread {
 		unset ($port_all);
 
 		ePrint::dPrintf (
-			Vari::DEBUG1, "[%-12s #%02d] regist event loop\n",
-			get_resource_type ($base), $base
+			Vari::DEBUG1, "[%-12s #%02d] regist event loop on %s:%d[%s::%s]\n",
+			get_resource_type ($base), $base,
+			self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 		);
 		event_base_loop ($base);
 		self::clearEvent ();
 		ePrint::dPrintf (
-			Vari::DEBUG1, "[%-15s] destruct event construct\n",
-			get_resource_type ($base), $base
+			Vari::DEBUG1, "[%-15s] destruct event construct on %s:%d[%s::%s]\n",
+			get_resource_type ($base), $base,
+			self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 		);
 		event_base_free ($base);
 		unset ($base);
@@ -396,8 +407,10 @@ Class sThread {
 		self::explodeAddr ($host, $port, $type, $sess->addr[$key]);
 
 		ePrint::dPrintf (
-			Vari::DEBUG3, "[%-12s #%02d] %s:%d Read Callback\n",
-			get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port
+			Vari::DEBUG3, "[%-12s #%02d] Calling %s::%s %s:%d on %s:%d\n",
+			get_resource_type ($sess->sock[$key]), $sess->sock[$key],
+			__CLASS__, __FUNCTION__,
+			$host, $port, self::__f(__FILE__), __LINE__
 		);
 
 		if ( self::currentStatus ($key) !== Vari::EVENT_READY_RECV )
@@ -406,24 +419,28 @@ Class sThread {
 		if ( ($handler = self::getCallname ($key)) === false ) {
 			self::socketClose ($key);
 			ePrint::dPrintf (
-				Vari::DEBUG1, "[%-12s #%02d] free event buffer on read calllback\n",
-				get_resource_type ($sess->event[$key]), $sess->event[$key]
+				Vari::DEBUG1, "[%-12s #%02d] free event buffer on %s:%d[%s::%s]\n",
+				get_resource_type ($sess->event[$key]), $sess->event[$key],
+				self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 			);
 			event_buffer_free ($sess->event[$key]);
 			return true;
 		}
 
 		ePrint::dPrintf (
-			Vari::DEBUG2, "[%-12s #%02d] %s:%d Recieve %s call\n",
-			get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port, $handler
+			Vari::DEBUG2, "[%-12s #%02d] %s:%d Recieve %s call on %s:%d[%s::%s]\n",
+			get_resource_type ($sess->sock[$key]), $sess->sock[$key],
+			$host, $port, $handler,
+			self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 		);
 
 		while ( strlen ($_buf = event_buffer_read ($buf, 8192)) > 0 )
 			$buffer .= $_buf;
 
 		ePrint::dPrintf (
-			Vari::DEBUG3, "[%-12s #%02d] %s:%d Recieved data\n",
-			get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port
+			Vari::DEBUG3, "[%-12s #%02d] %s:%d Recieved data on %s:%d[%s::%s]\n",
+			get_resource_type ($sess->sock[$key]), $sess->sock[$key],
+			$host, $port, self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 		);
 		if ( ePrint::$debugLevel >= Vari::DEBUG3 ) {
 			$msg = rtrim ($buffer);
@@ -440,8 +457,9 @@ Class sThread {
 				self::$mod->$type->set_last_status ($sess, $key);
 				self::socketClose ($key);
 				ePrint::dPrintf (
-					Vari::DEBUG1, "[%-12s #%02d] free event buffer on read callback\n",
-					get_resource_type ($sess->event[$key]), $sess->event[$key]
+					Vari::DEBUG1, "[%-12s #%02d] free event buffer on %s:%d[%s::%s]\n",
+					get_resource_type ($sess->event[$key]), $sess->event[$key],
+					self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 				);
 				event_buffer_free ($sess->event[$key]);
 				return true;
@@ -451,8 +469,9 @@ Class sThread {
 		// }}}
 
 		ePrint::dPrintf (
-			Vari::DEBUG2, "[%-12s #%02d] %s:%d Complete %s call\n",
-			get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port, $handler
+			Vari::DEBUG2, "[%-12s #%02d] %s:%d Complete %s call on %s:%d[%s::%s]\n",
+			get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port, $handler,
+			self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 		);
 	
 		/*
@@ -461,9 +480,11 @@ Class sThread {
 		if ( ($is_rw = self::nextStatus ($key)) === false ) {
 			self::socketClose ($key);
 			ePrint::dPrintf (
-				Vari::DEBUG1, "[%-12s #%02d] free event buffer on read callback\n",
-				get_resource_type($sess->event[$key]), $sess->event[$key]
+				Vari::DEBUG1, "[%-12s #%02d] free event buffer on %s:%d[%s::%s]\n",
+				get_resource_type($sess->event[$key]), $sess->event[$key],
+				self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 			);
+			var_dump($res->status[$key]);
 			event_buffer_free ($sess->event[$key]);
 			return true;
 		}
@@ -501,8 +522,9 @@ Class sThread {
 			if ( ($is_rw = self::nextStatus ($key)) === false ) {
 				self::socketClose ($key);
 				ePrint::dPrintf (
-					Vari::DEBUG1, "[%-12s #%02d] free event buffer on write callback\n",
-					get_resource_type ($sess->event[$key]), $sess->event[$key]
+					Vari::DEBUG1, "[%-12s #%02d] free event buffer on %s:%d[%s::%s]\n",
+					get_resource_type ($sess->event[$key]), $sess->event[$key],
+					self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 				);
 				event_buffer_free ($sess->event[$key]);
 			}
@@ -510,8 +532,10 @@ Class sThread {
 		}
 
 		ePrint::dPrintf (
-			Vari::DEBUG3, "[%-12s #%02d] %s:%d Write Callback\n",
-			get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port
+			Vari::DEBUG3, "[%-12s #%02d] Calling %s::%s %s:%d on %s:%d\n",
+			get_resource_type ($sess->sock[$key]), $sess->sock[$key],
+			__CLASS__, __FUNCTION__,
+			$host, $port, self::__f(__FILE__), __LINE__
 		);
 
 		if ( self::currentStatus ($key) !== Vari::EVENT_READY_SEND )
@@ -521,16 +545,18 @@ Class sThread {
 		if ( ($handler = self::getCallname ($key)) === false ) {
 			self::socketClose ($key);
 			ePrint::dPrintf (
-				Vari::DEBUG1, "[%-12s #%02d] free event buffer on write callback\n",
-				get_resource_type ($sess->event[$key]), $sess->event[$key]
+				Vari::DEBUG1, "[%-12s #%02d] free event buffer on %s:%d[%s::%s]\n",
+				get_resource_type ($sess->event[$key]), $sess->event[$key],
+				self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 			);
 			event_buffer_free ($sess->event[$key]);
 			return true;
 		}
 
 		ePrint::dPrintf (
-			Vari::DEBUG2, "[%-12s #%02d] %s:%d Send %s call\n",
-			get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port, $handler
+			Vari::DEBUG2, "[%-12s #%02d] %s:%d Send %s call on %s:%d[%s::%s]\n",
+			get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port, $handler,
+			self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 		);
 
 		$send = self::$mod->$type->$handler ($sess, $key);
@@ -541,8 +567,9 @@ Class sThread {
 			self::$mod->$type->set_last_status ($sess, $key);
 			self::socketClose ($key);
 			ePrint::dPrintf (
-				Vari::DEBUG1, "[%-12s #%02d] free event buffer on write callback\n",
-				get_resource_type ($sess->event[$key]), $sess->event[$key]
+				Vari::DEBUG1, "[%-12s #%02d] free event buffer on %s:%d[%s::%s]\n",
+				get_resource_type ($sess->event[$key]), $sess->event[$key],
+				self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 			);
 			event_buffer_free ($sess->event[$key]);
 			return true;
@@ -551,8 +578,11 @@ Class sThread {
 		if ( event_buffer_write ($buf, $send, strlen ($send)) === false ) {
 			if ( ePrint::$debugLevel >= Vari::DEBUG1 ) {
 				ePrint::ePrintf (
-					"[%-12s #%02d] Error: %s:%d Send error",
-					array (get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port)
+					"[%-12s #%02d] Error: %s:%d Send error on %s:%d[%s::%s]",
+					array (
+						get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port,
+						self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
+					)
 				);
 			}
 			$res->failure++;
@@ -560,15 +590,17 @@ Class sThread {
 			$res->status[$key] = array ("{$host}:{$port}", false, "{$handler} Send error");
 			self::socketClose ($key);
 			ePrint::dPrintf (
-				Vari::DEBUG1, "[%-12s #%02d] free event buffer on write callback\n",
-				get_resource_type ($sess->event[$key]), $sess->event[$key]
+				Vari::DEBUG1, "[%-12s #%02d] free event buffer on %s:%d[%s::%s]\n",
+				get_resource_type ($sess->event[$key]), $sess->event[$key],
+				self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 			);
 			event_buffer_free ($sess->event[$key]);
 			return true;
 		}
 		ePrint::dPrintf (
-			Vari::DEBUG3, "[%-12s #%02d] %s:%d Send data\n",
-			get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port
+			Vari::DEBUG3, "[%-12s #%02d] %s:%d Send data on %s:%d[%s::%s]\n",
+			get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port,
+			self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 		);
 		if ( ePrint::$debugLevel >= Vari::DEBUG3 ) {
 			$msg = rtrim ($send);
@@ -576,8 +608,9 @@ Class sThread {
 		}
 
 		ePrint::dPrintf (
-			Vari::DEBUG2, "[%-12s #%02d] %s:%d Complete %s call\n",
-			get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port, $handler
+			Vari::DEBUG2, "[%-12s #%02d] %s:%d Complete %s call on %s:%d[%s::%s]\n",
+			get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port, $handler,
+			self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 		);
 
 		$sess->send[$key] = Vari::EVENT_SEND_DONE;
@@ -652,10 +685,11 @@ Class sThread {
 			if ( $is_rw === false ) {
 				if ( ePrint::$debugLevel >= Vari::DEBUG1 ) {
 					ePrint::ePrintf (
-						"[%-12s #%02d] Error: %s:%d 'Unknown status => %d (%s)'",
+						"[%-12s #%02d] Error: %s:%d 'Unknown status => %d (%s)' on %s:%d[%s::%s]",
 						array (
 							get_resource_type ($sess->sock[$key]), $sess->sock[$key],
-							$host, $port, $sess->status[$key], $type
+							$host, $port, $sess->status[$key], $type,
+							self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 						)
 					);
 				}
@@ -668,8 +702,9 @@ Class sThread {
 				);
 			} else {
 				ePrint::dPrintf (
-					Vari::DEBUG1, "[%-12s #%02d] %s:%d Socket close\n",
-					get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port
+					Vari::DEBUG1, "[%-12s #%02d] %s:%d Socket close on %s:%d[%s::%s]\n",
+					get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port,
+					self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 				);
 				$res->success++;
 				$res->status[$key] = array ("{$host}:{$port}", true, 'Success');
@@ -682,16 +717,18 @@ Class sThread {
 			switch ($is_rw) {
 				case Vari::EVENT_READY_SEND :
 					ePrint::dPrintf (
-						Vari::DEBUG3, "[%-12s #%02d] %s:%d Enable write event\n",
-						get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port
+						Vari::DEBUG3, "[%-12s #%02d] %s:%d Enable write event on %s:%d[%s::%s]\n",
+						get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port,
+						self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 					);
 					event_buffer_enable ($sess->event[$key], EV_WRITE);
 					event_buffer_disable ($sess->event[$key], EV_READ);
 					break;
 				default :
 					ePrint::dPrintf (
-						Vari::DEBUG3, "[%-12s #%02d] %s:%d Enable read event\n",
-						get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port
+						Vari::DEBUG3, "[%-12s #%02d] %s:%d Enable read event on %s:%d[%s::%s]\n",
+						get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port,
+						self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 					);
 					event_buffer_enable ($sess->event[$key], EV_READ);
 					event_buffer_disable ($sess->event[$key], EV_WRITE);
@@ -783,8 +820,9 @@ Class sThread {
 			$handler = $type . '_quit';
 			if ( method_exists (self::$mod->$type, $handler) ) {
 				ePrint::dPrintf (
-					Vari::DEBUG2, "[%-12s #%02d] %s:%d Quit call\n",
-					get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port
+					Vari::DEBUG2, "[%-12s #%02d] %s:%d Quit call on %s:%d[%s::%s]\n",
+					get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port,
+					self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 				);
 
 				$send = self::$mod->$type->$handler ($sess, $key);
@@ -792,8 +830,9 @@ Class sThread {
 
 				ePrint::dPrintf (
 					Vari::DEBUG3,
-					"[%-12s #%02d] %s:%d Send data\n",
-					get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port
+					"[%-12s #%02d] %s:%d Send data on %s:%d[%s::%s]\n",
+					get_resource_type ($sess->sock[$key]), $sess->sock[$key], $host, $port,
+					self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 				);
 
 				if ( ePrint::$debugLevel >= Vari::DEBUG3 ) {
@@ -807,8 +846,9 @@ Class sThread {
 
 		if ( is_resource ($sess->sock[$key]) ) {
 			ePrint::dPrintf (
-				Vari::DEBUG2, "[%-12s #%02d] close socket call\n",
-				get_resource_type ($sess->sock[$key]), $sess->sock[$key]
+				Vari::DEBUG2, "[%-12s #%02d] close socket call on %s:%d[%s::%s]\n",
+				get_resource_type ($sess->sock[$key]), $sess->sock[$key],
+				self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 			);
 			fclose ($sess->sock[$key]);
 		}
@@ -840,6 +880,19 @@ Class sThread {
 		unset (Vari::$time->cend[$key]);
 		unset (Vari::$time->pstart[$key]);
 		unset (Vari::$time->pend[$key]);
+	}
+	// }}}
+
+	// {{{ +-- private (string) sThread::__f($f)
+	/**
+	 * 파일 경로중 파일 이름만 리턴
+	 *
+	 * @access private
+	 * @reuturn string
+	 * @param string 파일 경로
+	 */
+	private function __f($f) {
+		return preg_replace ('!.*/!', '', $f);
 	}
 	// }}}
 }
