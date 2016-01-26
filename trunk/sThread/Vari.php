@@ -258,6 +258,7 @@ Class Vari {
 		if ( ! is_array ($a) )
 			return '0 msec';
 
+		$time = 0;
 		foreach ( $a as $t ) {
 			if ( preg_match ('/(.*)[\s]+msec/', $t, $matches) )
 				$time += $matches[1] * 1000;

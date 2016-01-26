@@ -12,7 +12,7 @@
 		<active>yes</active>
 	</lead>
 	<date>2016-01-27</date>
-	<time>02:20:41</time>
+	<time>05:27:20</time>
 	<version>
 		<release>1.1.1</release>
 		<api>1.0.0</api>
@@ -24,6 +24,7 @@
 	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
 	<notes>* fixed wrong header name Accpt to Accept on http module
 * enhanced debug messages
+* optimized callback process
 </notes>
 	<contents>
 		<dir name="/">
@@ -37,8 +38,8 @@
 			<file role="php" md5sum="2b1033988ba9ae8a6dfce855d1ed7326" name="sThread/Addr.php" />
 			<file role="php" md5sum="80e0e89ab57ef800de9cafa3b73bd42a" name="sThread/Log.php" />
 			<file role="php" md5sum="8b1d2c5bb39a107ca26c3984260d8559" name="sThread/Module.php" />
-			<file role="php" md5sum="731e9c37f8293cea12849003bea5746b" name="sThread/Vari.php" />
-			<file role="php" md5sum="79e652669ccac96d8d63f23e73b0e280" name="sThread.php" />
+			<file role="php" md5sum="9953f2087dcf459116a85ce2f3b8da65" name="sThread/Vari.php" />
+			<file role="php" md5sum="f33790550ebec78952f739703cce5e7e" name="sThread.php" />
 		</dir>
 	</contents>
 	<dependencies>
@@ -76,6 +77,7 @@
 			<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
 			<notes>* fixed wrong header name Accpt to Accept on http module
 * enhanced debug messages
+* optimized callback process
 </notes>
 		</release>
 		<release>
