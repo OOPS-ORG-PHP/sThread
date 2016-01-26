@@ -39,7 +39,7 @@ ePrint::$debugLevel = 0;
  * var1=>val1,var2=>val2,var3=>val3...
  */
 
-$host = 'test.domain.com:80';
+$host = 'chosun.com:80';
 /*
  * sThread::execute ('host:port', timeout);
  */
@@ -48,10 +48,10 @@ print_r (Vari::$res);
 
 unset ($host);
 $host = array (
-	'test.domain.com:80', /* use http module */
-	'test10.domain.com:227', /* need port 227 module */
-	'test11.domain.com:21', /* need port 21 module */
-	'test111.domain.com:80:http|uri=>/index.jsp', /* use http module with httpd option */
+	'google.com:80', /* use http module */
+	'ftp.kaist.ac.kr:21|user=>anonymous,pass=>user@domain.com', /* need port 21 module */
+	'chosun.com:80:http|uri=>/robots.txt', /* use http module with httpd option */
+	'daum.net:11211', /* use memcache module */
 );
 
 $s->execute ($host, 1);
@@ -59,7 +59,7 @@ print_r (Vari::$res);
 
 Vari::clear ();
 unset ($host);
-$host = 'ns.kldp.org:53|query=>kldp.org';
+$host = 'google-public-dns-a.google.com:53|query=>kldp.org';
 $s->execute ($host, 1, 'udp');
 print_r (Vari::$res);
 
