@@ -312,7 +312,7 @@ Class sThread_HTTP {
 
 		return "GET {$uri} HTTP/1.1\r\n" .
 				"Host: {$hostHeader}\r\n" .
-				"Accpt: *.*\r\n" .
+				"Accept: *.*\r\n" .
 				$referer .
 				"User-Agent: {$agent}\r\n" .
 				"Connection: close\r\n" .
