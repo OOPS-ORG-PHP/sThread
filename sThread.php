@@ -181,8 +181,6 @@ Class sThread {
 	 *              class를 호출 하지 않는다. 기본값 false.
 	 */
 	function init ($mod_no_init = false) {
-		Vari::clear ();
-
 		if ( $mod_no_init === false ) {
 			sThread_Module::init ();
 			self::$mod = &sThread_Module::$obj;
@@ -232,6 +230,7 @@ Class sThread {
 	 * @param  string tcp 또는 udp. 기본값 tcp.
 	 */
 	function execute ($hosts, $tmout = 1, $protocol = null) {
+		Vari::clear ();
 		if ( ! is_array ($hosts) )
 			$hosts = array ($hosts);
 
@@ -277,7 +276,7 @@ Class sThread {
 			usleep (self::$timer);
 
 			if ( self::$async !== true && ! is_resource ($sess->sock[$key]) ) {
-				if ( ePrint::$debugLevel >= Vari::DEBUG1 )
+				if ( ePrint::$debugLevel >= Vari::DEBUG1 ) {
 					ePrint::ePrintf (
 						"%s:%d (%02d) Failed socket create: %s on %s:%d[%s::%s]",
 						array (
@@ -285,6 +284,7 @@ Class sThread {
 							self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 						)
 					);
+				}
 				$res->failure++;
 				self::$mod->$type->set_last_status ($sess, $key);
 				$res->status[$key] = array ("{$host}:{$port}", false, "Failed socket create: {$errstr}");
@@ -381,9 +381,61 @@ Class sThread {
 	 *
 	 * @return void
 	 * @param  resource libevent resource
-	 * @param  array    callback argument
+	 * @param  int      error code
+	 *                  EVBUFFER_READ (1)
+	 *                  EVBUFFER_WRITE (2)
+	 *                  EVBUFFER_EOF (16)
+	 *                  EVBUFFER_ERROR (32)
+	 *                  EVBUFFER_TIMEOUT (64)
 	 */
-	function exceptionCallback ($buf, $arg) { }
+	function exceptionCallback ($buf, $err) {
+		$sess = &Vari::$sess;
+		$res  = &Vari::$res;
+		if ( ($key = array_search ($buf, Vari::$sess->event, true)) !== false ) {
+			if ( $err == (EVBUFFER_READ|EVBUFFER_EOF) ) {
+				ePrint::dPrintf (
+					Vari::DEBUG1, "[%-12s #%02d] free %s on execption callback on %s:%d[%s::%s] {$err}\n",
+					get_resource_type($buf), $buf, get_resource_type ($buf),
+					self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
+				);
+				event_buffer_free ($buf);
+				return;
+			}
+
+			switch ($err) {
+				case (EVBUFFER_READ|EVBUFFER_TIMEOUT) :
+					$errstr = 'Event buffer read timeout';
+					break;
+				case (EVBUFFER_WRITE|EVBUFFER_TIMEOUT) :
+					$errstr = 'Event buffer write timeout';
+					break;
+				case (EVBUFFER_READ|EVBUFFER_ERROR) :
+					$errstr = 'Event buffer read error';
+					break;
+				case (EVBUFFER_WRITE|EVBUFFER_ERROR) :
+					$errstr = 'Event buffer write error';
+					break;
+				case (EVBUFFER_CONNECTED) :
+					$errstr = 'Event buffer connected error';
+					break;
+				default:
+					$errstr = 'Event buffer unknown error';
+			}
+
+			$res->status[$key] = array (
+				sprintf ('%s:%d', $sess->addr[$key][0], $sess->addr[$key][1]),
+				false,
+				$errstr
+			);
+		}
+
+		ePrint::dPrintf (
+			Vari::DEBUG1, "[%-12s #%02d] free %s on execption callback on %s:%d[%s::%s]\n",
+			get_resource_type($buf), $buf, get_resource_type ($buf),
+			self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
+		);
+		event_buffer_free ($buf);
+	}
 	// }}}
 
 	// {{{ (bool) sThread::readCallback ($buf, $arg)
@@ -423,6 +475,7 @@ Class sThread {
 				get_resource_type ($sess->event[$key]), $sess->event[$key],
 				self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 			);
+			event_buffer_disable ($sess->event[$key], EV_READ);
 			event_buffer_free ($sess->event[$key]);
 			return true;
 		}
@@ -434,6 +487,7 @@ Class sThread {
 			self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 		);
 
+		$buffer = null;
 		while ( strlen ($_buf = event_buffer_read ($buf, 8192)) > 0 )
 			$buffer .= $_buf;
 
@@ -461,6 +515,7 @@ Class sThread {
 					get_resource_type ($sess->event[$key]), $sess->event[$key],
 					self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 				);
+				event_buffer_disable ($sess->event[$key], EV_READ);
 				event_buffer_free ($sess->event[$key]);
 				return true;
 			}
@@ -484,7 +539,7 @@ Class sThread {
 				get_resource_type($sess->event[$key]), $sess->event[$key],
 				self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 			);
-			var_dump($res->status[$key]);
+			event_buffer_disable ($sess->event[$key], EV_READ);
 			event_buffer_free ($sess->event[$key]);
 			return true;
 		}
@@ -526,6 +581,7 @@ Class sThread {
 					get_resource_type ($sess->event[$key]), $sess->event[$key],
 					self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 				);
+				event_buffer_disable ($sess->event[$key], EV_WRITE);
 				event_buffer_free ($sess->event[$key]);
 			}
 			return true;
@@ -549,6 +605,7 @@ Class sThread {
 				get_resource_type ($sess->event[$key]), $sess->event[$key],
 				self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 			);
+			event_buffer_disable ($sess->event[$key], EV_WRITE);
 			event_buffer_free ($sess->event[$key]);
 			return true;
 		}
@@ -571,6 +628,7 @@ Class sThread {
 				get_resource_type ($sess->event[$key]), $sess->event[$key],
 				self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 			);
+			event_buffer_disable ($sess->event[$key], EV_WRITE);
 			event_buffer_free ($sess->event[$key]);
 			return true;
 		}
@@ -594,6 +652,7 @@ Class sThread {
 				get_resource_type ($sess->event[$key]), $sess->event[$key],
 				self::__f(__FILE__), __LINE__, __CLASS__, __FUNCTION__
 			);
+			event_buffer_disable ($sess->event[$key], EV_WRITE);
 			event_buffer_free ($sess->event[$key]);
 			return true;
 		}
@@ -786,10 +845,12 @@ Class sThread {
 				 self::$mod->$type->check_buf_status ($val) !== Vari::EVENT_READY_CLOSE ) {
 				list ($host, $port, $type) = Vari::$sess->addr[$key];
 				Vari::$res->failure++;
-				if ( $val == 1 )
-					Vari::$res->status[$key] = array ("{$host}:{$port}", false, 'Connection timeout');
-				else
-					Vari::$res->status[$key] = array ("{$host}:{$port}", false, 'Protocol timeout');
+				if ( ! Vari::$res->status[$key] ) {
+					if ( $val == 1 )
+						Vari::$res->status[$key] = array ("{$host}:{$port}", false, 'Connection timeout');
+					else
+						Vari::$res->status[$key] = array ("{$host}:{$port}", false, 'Protocol timeout');
+				}
 
 				if ( self::$mod->$type->clearsession === true )
 					self::$mod->$type->clear_session ($key);
