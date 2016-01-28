@@ -20,7 +20,6 @@ if ( version_compare (PHP_VERSION, '5.3.0', '>=') ) {
  * for libevent2 warning messages
  */
 fclose (STDERR);
-$STDERR = fopen('/dev/dull', 'wb');
 
 require_once 'sThread.php';
 
