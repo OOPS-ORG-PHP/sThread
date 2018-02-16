@@ -15,9 +15,8 @@
  * @category    Network
  * @package     sThread
  * @author      JoungKyun.Kim <http://oops.org>
- * @copyright   (c) 2015 OOPS.ORG
+ * @copyright   (c) 2018, OOPS.ORG
  * @license     BSD License
- * @version     $Id$
  * @link        http://pear.oops.org/package/sThread
  * @since       File available since relase 1.0.0
  * @filesource
@@ -61,7 +60,7 @@ require_once 'sThread/Log.php';
  * @category    Network
  * @package     sThread
  * @author      JoungKyun.Kim <http://oops.org>
- * @copyright   (c) 2015 OOPS.ORG
+ * @copyright   (c) 2018, OOPS.ORG
  * @license     BSD License
  * @link        http://pear.oops.org/package/sThread
  */
@@ -949,7 +948,7 @@ Class sThread {
 	 * 파일 경로중 파일 이름만 리턴
 	 *
 	 * @access private
-	 * @reuturn string
+	 * @return string
 	 * @param string 파일 경로
 	 */
 	private function __f($f) {
